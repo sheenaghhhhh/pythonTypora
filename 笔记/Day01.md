@@ -539,36 +539,36 @@ _start:                			; 在屏幕上显示一个字符串
 
 - [Welcome to Python.org](https://www.python.org/)
 
-![image-20240715144104605](assets\image-20240715144104605.png)
+![image-20240715144104605](assets/image-20240715144104605.png)
 
 ## 6.2 下载解释器
 
 - 在downloads 点击 windows
 
-![image-20240715144224624](assets\image-20240715144224624.png)
+![image-20240715144224624](assets/image-20240715144224624.png)
 
 - 按 ctrl + f 搜索 3.10
 - 下载安装包： [Windows installer (64-bit)](https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe)
 
-![image-20240715144343942](assets\image-20240715144343942.png)
+![image-20240715144343942](assets/image-20240715144343942.png)
 
 ## 6.3 安装 Python解释器
 
 - 自定义安装 Customize installation
 
-![image-20240715144601363](assets\image-20240715144601363.png)
+![image-20240715144601363](assets/image-20240715144601363.png)
 
 - 全勾上
 
-![image-20240715144638650](assets\image-20240715144638650.png)
+![image-20240715144638650](assets/image-20240715144638650.png)
 
 - 安装ing
 
-![image-20240715144809174](assets\image-20240715144809174.png)
+![image-20240715144809174](assets/image-20240715144809174.png)
 
 - 安装成功
 
-![image-20240715145125768](assets\image-20240715145125768.png)
+![image-20240715145125768](assets/image-20240715145125768.png)
 
 - pycharm
 
