@@ -78,7 +78,7 @@
 
 
 
-## 02Quiz：
+## 03Quiz：
 
 1. 流程控制语句有哪些，语法格式
 2. 如何向程序输入内容，程序如何输出内容
@@ -205,4 +205,81 @@
 
 6. ==和is都是去判断两个变量是否相等，区别在于= =判断值是否相等，而is判断值和内存地址是否一致
 
-0
+
+
+## 04Quiz：
+
+1. 尽可能多的写出你所知道的数据类型的内置方法
+
+
+
+## 04Answer：
+
+1. 整数
+
+   类型转换 int()
+
+   进制转换bin oct hex
+
+   int去转换
+
+   
+
+   浮点数
+
+   float()
+
+   .isdigit()
+
+   .isdecimal()
+
+   
+
+   字符串
+
+   .join()
+
+   "str"[0];"string"[-1]
+
+   "string"[0:3:2]
+
+   len()
+
+   in/not in
+
+   .strip()
+
+   .lstrip()/.rstrip()
+
+   .split()
+
+   for/while
+
+   string * n
+
+   .upper() .lower()
+
+   .startwith() .endwith()
+
+   %s
+
+   '{}'.format()
+
+   f'{a}'
+
+   .replace()
+
+   .isdigit()/.isdecimal
+
+   
+
+   列表
+
+   list()
+
+   [0:1:1]
+
+   
+
+
+
