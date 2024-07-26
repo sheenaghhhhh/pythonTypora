@@ -425,3 +425,88 @@ for i in range(10):
 """
 ```
 
+
+
+## 07Quiz：
+
+1. 什么是函数
+2. 函数的参数分类
+3. 函数的调用方式
+
+## 07Answer：
+
+1. 代码的集合体可以写成函数，帮助我们实现重复代码的输出
+
+2. 分类1：形参和实参
+
+   def fun(a, b) 形参：在定义的时候放在函数名后面的参数
+
+   ​	...
+
+   fun(x, y) 实参：在调用的时候实际传入的值
+
+   
+
+   分类2：关键字参数和位置参数
+
+   def fun(username, password)
+
+   ​	...
+
+   fun("sheenagh", "526")
+
+   fun(password="526", username="sheenagh")
+
+   混用的时候，关键字需要放到后面
+
+   fun("sheenagh", password="526")
+
+   
+
+   其他：默认参数
+
+   def fun(username, password, age="20")
+
+   
+
+   其他：可变长参数
+
+   可变长位置参数
+
+   可变长关键字参数
+
+   def fun(a, b, *args):
+
+   def add(x, y, *args, **kwargs):
+
+3. 直接调用
+
+   def fun():
+
+   ​	...
+
+   fun()
+
+   间接调用
+
+   def fun():
+
+   ​	...
+
+   haha = fun
+
+   haha()
+
+   表达式调用
+
+   和返回值有关 对元组进行解包赋值
+
+   def fun():
+
+   ​	...
+
+   ​	return a, b
+
+   x, y = fun()
+
+   
