@@ -663,3 +663,52 @@ def outer(func):
 ```
 
 6. 写一个取款函数，取款之前验证用户名和密码，写两个装饰器分别验证用户名和密码
+
+
+
+## 10Quiz：
+
+1. 什么是模块
+2. 什么是包
+3. 模块的加载顺序和查找顺序
+4. json模块如何保存和读取数据
+5. 生成器的创建方式，特点
+6. 什么是可迭代对象，什么是迭代器对象
+
+
+
+## 10Answer：
+
+1. 一个py文件其实就是一个模块 模块名=文件名
+2. 多个py文件+一个 `__init__.py`文件的文件集合体
+
+3. 内建->py
+
+   py文件->内建
+
+4. import jason
+
+   jason.dumps
+
+   jason.dump
+
+   jason.loads
+
+   jason.load
+
+5. g = (x * 2 for x in range(5))
+
+   def my_generator():
+       yield 1
+       yield 2
+       yield 3
+
+   节省内存 惰性计算 无限序列
+
+5. 具有 `__iter__.py`方法的对象
+
+   包括str list dict tuple set；
+
+   具有 `__iter__.py`和 `__next__.py`方法的对象
+
+   可以用可迭代对象 `.__iter__()`去生成
