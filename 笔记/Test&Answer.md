@@ -712,3 +712,78 @@ def outer(func):
    具有 `__iter__.py`和 `__next__.py`方法的对象
 
    可以用可迭代对象 `.__iter__()`去生成
+
+## 11Quiz：
+
+1. os 模块至少写出 5个常用的方法，尽可能多的写
+2. 什么是json 格式的数据，有何特点，json 模块的几个方法是什么，有什么作用
+
+## 11Answer：
+
+1. os.path.abspath() 文件绝对路径
+
+   os.path.dirname() 文件夹绝对路径
+
+   os.path.exist() 判断路径是否存在
+
+   os.path.join() 拼接文件路径
+
+   os.path.split() 切割文件路径 第2部分文件名or最后的文件夹名
+
+   os.path.basename() 获取结尾文件名or最后的文件夹名
+
+   os.path.isfile() 判断是否为文件
+
+   os.path.isabs() 判断是否为绝对路径
+
+   os.path.isdir() 判断是否为文件夹路径
+
+   os.path.getatime() 获取文件/文件夹的最后访问时间
+
+   os.path.getctime() 获取文件/文件夹的创建时间
+
+   os.path.getMtime() 获取文件/文件夹的最后修改时间
+
+   os.path.getsize() 获取文件大小(单位是字节)
+
+   os.path.sep() 获取系统的路径分隔符
+
+   
+
+   os.mkdir() 创建单级文件夹
+
+   os.makedirs() 创建多级文件夹
+
+   os.rmdir() 删除单级文件夹
+
+   os.removedirs() 创建多级文件夹
+
+   os.listdir() 列出所有文件名
+
+   os.rename() 重命名文件or文件夹名字
+
+   os.stat() 列出元信息
+
+   os.getcwd() 获取到当前所在的工作目录
+
+   os.chdir() 切换目录
+
+   
+
+
+
+2. jason数据做好了序列化和反序列化的相关操作
+
+   jason.dumps()
+
+   jason.loads()
+
+   jason形式的str和python数据类型obj的互转
+
+   jason.dump(x, fp)
+
+   jason.load(fp=fp)
+
+   jason文件和python数据类型obj的互转
+   
+   

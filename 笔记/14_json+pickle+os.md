@@ -595,7 +595,7 @@ old_name = img_path
 new_name = os.path.join(BASE_DIR, 'new_add.json')
 # os.rename(old_name, new_name)
 
-# 8.列出当前文件的元信息
+# 7.列出当前文件的元信息
 print(os.stat(BASE_DIR))
 # os.stat_result(st_mode=16895, st_ino=5629499534458662, st_dev=1183741232, st_nlink=1, st_uid=0, st_gid=0,
 # st_size=4096, st_atime=1722502256, st_mtime=1722502256, st_ctime=1722473654)
@@ -640,6 +640,223 @@ print(res)
 
 
 
+# 系统
+
+```python
+# os + json
+# 写一个文件处理系统
+# json模块学了 用json模块存储用户信息
+# 做一个登录注册文件系统
+# 查看当前文件夹下的所有文件名
+# 创建文件夹
+# 删除文件夹
+# 重命名文件夹
+# 文件拷贝
+
+# 注册 register
+# 登录 login
+# 查看当前文件夹下的所有文件名
+# 创建文件夹
+# 删除文件夹
+# 重命名文件夹
+# 文件拷贝
+
+
+import json
+import os
+import shutil  # 添加文件拷贝功能所需的模块
+
+# 全局登陆字典
+login_dict = {
+    "username": None
+}
+
+# 用户数据存储
+user_data_all = {}
+
+# 数据处理函数
+def handle(file='user_data.json', mode='r', encoding="utf-8", data=None):
+    if mode == "r":
+        user_data_all = {}
+        if os.path.exists(file):
+            try:
+                with open(file=file, mode=mode, encoding=encoding) as fp:
+                    content = fp.read().strip()
+                    if content:
+                        user_data_all = json.loads(content)
+                    else:
+                        print("文件内容为空，初始化空用户数据。")
+            except json.JSONDecodeError:
+                print("JSON 解析错误，文件格式不正确。")
+        else:
+            print("用户数据文件不存在，将创建新文件。")
+        return user_data_all
+    elif mode == "w" and data is not None:
+        with open(file=file, mode='w', encoding=encoding) as fp:
+            json.dump(data, fp, ensure_ascii=False, indent=4)
+def get_username_password():
+    username = input("请输入用户名 :>>>> ").strip()
+    password = input("请输入密码 :>>>> ").strip()
+    return username, password
+
+def input_hobby():
+    hobby_list = []
+    while True:
+        hobby = input("请输入爱好(q退出) :>>>> ").strip()
+        if hobby.lower() == "q":
+            print("当前输入爱好结束!")
+            break
+        if hobby and hobby not in hobby_list:
+            hobby_list.append(hobby)
+            print(f"当前输入爱好 {hobby} 已添加!当前已有爱好 :>>>> {', '.join(hobby_list)}")
+    return hobby_list
+
+def input_age():
+    age = input("请输入年龄 :>>>> ").strip()
+    if not age.isdigit():
+        return False, "当前年龄非法!不是数字!"
+    age = int(age)
+    if age < 0 or age > 150:
+        return False, "当前年龄已超出正常人类范畴!"
+    return True, age
+
+def register():
+    print("欢迎来到注册功能!")
+    username, password = get_username_password()
+    flag, age = input_age()
+    if not flag:
+        return flag, age
+    hobby_list = input_hobby()
+    role = "admin" if username == "dream" and password == "521" else "user"
+    user_data_all = handle()
+    if username in user_data_all:
+        return False, f"当前用户 {username} 已存在!请去登录!"
+    user_data_all[username] = {
+        "username": username,
+        "password": password,
+        "age": age,
+        "hobby": hobby_list,
+        "role": role
+    }
+    handle(mode="w", data=user_data_all)
+    return True, f"用户 {username} 注册成功!"
+
+def login():
+    print("欢迎来到登陆功能!")
+    username, password = get_username_password()
+    user_data_all = handle()
+    user_info = user_data_all.get(username)
+    if not user_info:
+        return False, f"当前用户 {username} 不存在 请先注册!"
+    if user_info.get("password") != password:
+        return False, f"当前用户 {username} 用户名或密码错误 请重新输入!"
+    login_dict.update({
+        "username": user_info.get("username"),
+        "role": user_info.get("role")
+    })
+    return True, f"当前用户 {username} 登陆成功!"
+
+# 文件系统功能
+
+def list_files():
+    files = os.listdir(".")
+    print(f"当前目录下的文件和文件夹有: {', '.join(files)}")
+    return True, "文件列表显示成功"
+
+def create_directory():
+    dir_name = input("请输入要创建的文件夹名称 :>>>> ").strip()
+    if not dir_name:
+        return False, "文件夹名称不能为空!"
+    try:
+        os.makedirs(dir_name)
+        return True, f"文件夹 {dir_name} 创建成功!"
+    except FileExistsError:
+        return False, f"文件夹 {dir_name} 已存在!"
+    except Exception as e:
+        return False, str(e)
+
+def delete_directory():
+    dir_name = input("请输入要删除的文件夹名称 :>>>> ").strip()
+    if not dir_name:
+        return False, "文件夹名称不能为空!"
+    try:
+        os.rmdir(dir_name)
+        return True, f"文件夹 {dir_name} 删除成功!"
+    except FileNotFoundError:
+        return False, f"文件夹 {dir_name} 不存在!"
+    except OSError:
+        return False, f"文件夹 {dir_name} 不是空的，无法删除!"
+    except Exception as e:
+        return False, str(e)
+
+def rename_directory():
+    old_name = input("请输入要重命名的文件夹名称 :>>>> ").strip()
+    new_name = input("请输入新的文件夹名称 :>>>> ").strip()
+    if not old_name or not new_name:
+        return False, "文件夹名称不能为空!"
+    try:
+        os.rename(old_name, new_name)
+        return True, f"文件夹 {old_name} 重命名为 {new_name} 成功!"
+    except FileNotFoundError:
+        return False, f"文件夹 {old_name} 不存在!"
+    except Exception as e:
+        return False, str(e)
+
+def copy_file():
+    src_file = input("请输入要拷贝的文件路径 :>>>> ").strip()
+    dest_file = input("请输入目标文件路径 :>>>> ").strip()
+    if not src_file or not dest_file:
+        return False, "文件路径不能为空!"
+    try:
+        shutil.copy(src_file, dest_file)
+        return True, f"文件 {src_file} 拷贝到 {dest_file} 成功!"
+    except FileNotFoundError:
+        return False, f"文件 {src_file} 不存在!"
+    except Exception as e:
+        return False, str(e)
+
+# 主功能菜单
+func_menu = '''
+***************** 文件系统 ***************** 
+                    1. 注册
+                    2. 登陆
+                    3. 查看当前文件夹下的所有文件
+                    4. 创建文件夹
+                    5. 删除文件夹
+                    6. 重命名文件夹
+                    7. 文件拷贝
+                    q. 退出
+***************** 文件系统 ***************** 
+'''
+
+func_dict = {
+    "1": register,
+    "2": login,
+    "3": list_files,
+    "4": create_directory,
+    "5": delete_directory,
+    "6": rename_directory,
+    "7": copy_file
+}
+
+def main():
+    while True:
+        print(func_menu)
+        func_id = input("请输入功能ID :>>>> ").strip()
+        if func_id == "q":
+            print("欢迎下次使用!")
+            break
+        func = func_dict.get(func_id)
+        if not func:
+            print("当前功能ID不存在!")
+            continue
+        flag, msg = func()
+        print(msg)
+
+if __name__ == "__main__":
+    main()
+```
+
 
 
 TASK：
@@ -648,18 +865,20 @@ TASK：
 
 2. 笔记 √
 
-3. 使用到 os + jason 写两个系统
+3. 使用到 os + jason 写系统
 
-   写一个文件处理系统 用jason模块存储用户信息
+   文件处理系统 用jason模块存储用户信息
 
    写一个文件系统，具有以下功能：
 
-   查看当前文件夹下的索引文件名
+   注册登录
+
+   查看当前文件夹下的所有文件名
 
    创建文件夹
 
    删除文件夹
 
    重命名文件夹
-
+   
    文件拷贝
