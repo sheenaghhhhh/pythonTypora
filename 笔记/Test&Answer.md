@@ -856,3 +856,124 @@ def outer(func):
    (2, 1)
 
    3页
+
+
+
+
+
+## 14Quiz: 
+
+1. 什么是装饰器
+2. 装饰器的模板
+3. 文件打开的方式
+4. 什么是可迭代对象，迭代器对象
+5. 什么是闭包函数
+6. 默写随机验证码生成器
+
+
+
+## 14Answer:
+
+1. 在不修改被装饰对象源代码和调用方式的前提下
+
+   为被装饰对象添加额外的功能
+
+2. ```python
+   def outer(func):
+       def inner():
+           # 在正式执行真正的func前做一些校验
+           if ...:
+               ...
+           # 执行 func 真正的函数 获取到函数的返回值
+           result = func()
+           # 对真正执行后的函数的结果进行定制化输出
+           if ...:
+               ...
+           return result
+       return inner
+   ```
+
+3. ```python
+   # 1.手动打开
+   fp = open(file_path, "w", encoding="utf-8")
+   fp.write()
+   fp.close()
+   # 要手动关闭
+   
+   # 2.自动回收资源
+   with open(file_path, "w", encoding="utf-8") as fp:
+       fp.write()
+   # 会自动关闭
+   ```
+
+4. 可迭代对象：有`__iter__`方法的对象
+
+   包括str dict list tuple set
+
+   迭代器对象：有`__iter__`和`__next__`方法的对象
+
+5. 内嵌函数对外部作用域有引用的函数就叫闭包函数
+
+6. ```python
+   # 默写随机验证码
+   # 大小数字随机
+   def verify(n):
+       code = ""
+       for i in range(n):
+           small = chr(random.choice([i for i in range(ord("a"), ord("z")+1)]))
+           big = chr(random.choice([i for i in range(ord("A"), ord("Z")+1)]))
+           number = str(random.randiant(0, 9))
+           code += random.choice(big, small, number)
+   ```
+
+
+
+## 15Quiz: 
+
+1. 什么是迭代器，什么是可迭代对象
+2. 什么是闭包函数，有哪些应用场景
+3. 遍历列表时，既能获取到当前元素的索引又可以获取到索引对应的值你有哪些思路
+4. 生成器的创建方式
+5. 什么是垃圾回收机制
+6. Python是值传递还是引用传递
+
+
+
+## 15Answer:
+
+1. 迭代取值的工具 既有`__iter__`也有`__next__`方法的对象
+
+   具有`__iter__`方法的对象
+
+2. 内嵌函数对外部作用域有引用的函数就叫闭包函数
+
+   使用场景：计时器 验证密码/是否登录/是否激活等操作
+
+3. 索引 i 0->len(list)-1 list[i]
+
+   enumerate()
+
+   for index in range(len(list)):
+
+4. ```python
+   g = (x for x in range(5))
+   # 元组生成式
+   
+   def generator():
+       yield 1
+       yield 2
+   # 关键字卡住
+   ```
+
+5. 用来回收不可用的变量值所占用的内存空间
+
+   三个过程
+
+   引用计数->标记清除->分代回收
+
+6. Python既不是值传递 也不是引用传递 他有自己的传递方式 既有可变变量也有不可变变量
+
+
+
+
+
