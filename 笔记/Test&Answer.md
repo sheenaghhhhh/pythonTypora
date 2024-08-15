@@ -1018,13 +1018,83 @@ def outer(func):
 
 
 
+## 17Quiz:
+
+1. 什么是封装
+2. 封装的好处
+3. 如何将函数属性包装成数据属性
+4. 封装会发生哪些事
+5. 你都用过os模块的那些方法，举例说明
 
 
 
 
 
+## 17Answer:
 
+1. 把某些数据保护和隐藏起来
 
+2. 可以防止外部代码随意修改对象内部的代码
+
+3. 在函数定义前面加@property
+
+4. ```python
+   首先类内部定义的时候把变量名用双下划线去声明
+   
+   这样初始化的时候 从最开始的变量名 变成了 __变量名
+   
+   进一步变成了 _类__变量名
+   
+   在类内部时 直接 类.__变量名可以调用
+   但是在类外部 需要对象._类__变量名才可以
+   
+   这种变形只会发生一次
+   ```
+
+5. os.path.x 和 os.x
+
+   ```python
+   # path
+   os.path.abspath()
+   os.path.dirname() 文件夹
+   os.path.exists()
+   
+   os.path.join()
+   os.path.split()
+   
+   os.path.basename() 结尾
+   os.path.isfile()
+   os.path.isabs()
+   os.path.isdir()
+   
+   os.path.atime()
+   os.path.ctime()
+   os.path.mtime()
+   
+   os.path.getsize()
+   os.path.sep() 分隔符
+   
+   
+   # os.x
+   os.mkdir()
+   os.makedirs()
+   os.rmdir()
+   os.removedirs()
+   
+   os.listdir()
+   os.rename()
+   os.stat() 元信息
+   
+   os.getcwd()
+   os.chdir()
+   os.system()
+   os.popen()
+   
+   
+   
+   ```
+
+   
 
 
 

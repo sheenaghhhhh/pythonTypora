@@ -108,6 +108,36 @@ del_product
 
 
 
+用户购物车支付
+
+验证登录
+
+传入用户名给pay_product_interface接口
+
+获取购物车
+
+拿商品
+
+没有 退出返回错误信息
+
+有  遍历 输出商品信息 名字数量单价总价 计回错误信息
+
+如果钱够且对 进行扣款 bankbalance -= float 总价
+
+购物车 清空
+
+流水 更新 收据
+
+生成扣款信息 
+
+
+
+
+
+
+
+
+
 
 
 
@@ -132,17 +162,27 @@ conf-setting里
 
 1求根目录
 
-2得数据存储目录
+2求数据存储目录
 
-3得日志总目录
+3求日志总目录
 
-4得日志分目录
+4求日志分目录
+
+日志配置
+
+路径列表
 
 
 
+bin-main里
 
+main_dict= {key:(menu,dict)}
 
+main_menu
 
+def fun循环
+
+def main
 
 
 
@@ -200,3 +240,8 @@ user_func_menu = """
 
 
 
+user
+
+
+
+active_bank_card
