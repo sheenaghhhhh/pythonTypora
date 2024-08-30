@@ -228,8 +228,6 @@
 
 
 
-
-
 ## 3Quiz：
 
 1. 什么是闭包函数
@@ -350,8 +348,6 @@
    server.sendto(data_to_client.encode("utf-8"), client_address)
    
    
-   
-   
    # 借助第三方模块
    from socket import socket, AF_INET, SOCK_DGRAM
    
@@ -362,7 +358,7 @@
    client.sendto(data_to_server.encode("utf-8"), (addr, prot))
    data_from_server = client.recvfrom(1024)
    ```
-
+   
 6. 面向对象 对象是某个整体 盛放需要的数据+功能
 
    面向国产 将程序流程化
@@ -421,5 +417,118 @@
    第四次挥手
 
    ACK=1 seq=u+1 ack=w+1
+
+   
+
+
+
+## 4Quiz:
+
+1. 同步，异步，阻塞，非阻塞
+2. 进程，程序
+3. 开设多进程的两种方式
+
+
+
+## 4Answer:
+
+1. 同步：在执行一个程序的时候，没有得到结果之前不会执行第二个程序
+
+   异步：在执行一个程序的时候，不需要等待当前结果，就可以执行第二个程序
+
+   阻塞：在进程返回之前，当前进程被挂起
+
+   非阻塞：不需要等待程序结果直接运行下一个
+
+2. 进程：运行起来的硬盘中的数据
+
+   程序：堆在硬盘中的数据
+
+3. Process类创建子进程对象启动
+
+   ```python
+   # 【一】创建多进程方式一
+   # 直接使用Process类创建 子进程对象然后启动
+   # 1.定义子进程函数
+   def work(name):
+       sleep_time = random.randint(1, 3)
+       print(f"{name} is sleeping for {sleep_time} seconds...")
+       time.sleep(sleep_time)
+       print(f"{name} is finished ...")
+   
+   
+   # 2.获得子进程对象并启动子进程
+   def process_normal():
+       # (1)得到一个进程对象
+       process_one = Process(
+           # target : 目标子进程函数 ， 记住给的是内存地址
+           target=work,
+           # args : 按照位置向目标函数传递参数，是一个元祖 即使一个元素也要加,
+           args=(1,)
+       )
+       process_two = Process(
+           target=work,
+           args=(2,)
+       )
+       
+       # (2)启动子进程
+       process_one.start()
+       process_two.start()
+       # 1
+       # 2
+       # 1 is sleeping for 3 seconds...
+       # 2 is sleeping for 1 seconds...
+       # 2 is finished ...
+       # 1 is finished ...
+       
+       # 开启多进程的目的是为了让多几个进程同时运行
+   
+   if __name__ == '__main__':
+       print("1")
+       process_normal()
+       print("2")
+   # 得到一个进程对象
+   ```
+
+   继承Process进行重写
+
+   ```python
+   # 【二】创建多进程方式二
+   # 继承父类process重写run方法
+   class MyProcess(Process):
+       def __init__(self, name):
+           super().__init__()
+           self.name = name
+   
+       def run(self):
+           sleep_time = random.randint(1, 4)
+           print(f"{self.name} is start sleeping {sleep_time} ... ")
+           time.sleep(sleep_time)
+           print(f"{self.name} is end sleeping {sleep_time} ... ")
+   
+   
+   def process_myprocess():
+       # (1)得到进程对象
+       process_one = MyProcess(name='1')
+       process_two = MyProcess(name='2')
+   
+       # (2)启动子进程
+       process_one.start()
+       process_two.start()
+       '''
+       main process start ... 
+       main process end ... 
+       1 is start sleeping 1 ... 
+       2 is start sleeping 3 ... 
+       1 is end sleeping 1 ... 
+       2 is end sleeping 3 ... 
+       '''
+   
+   
+   if __name__ == '__main__':
+       print(f"main process start ... ")
+       process_myprocess()
+       print(f"main process end ... ")
+   ```
 
    
