@@ -532,3 +532,389 @@
    ```
 
    
+
+
+
+## 5Quiz：
+
+1. 什么是进程，程序
+2. 三次握手和四次挥手
+3. 多进程实现服务端并发代码
+4. 什么是守护进程，如何做
+5. 什么是生产者模型和消费者模型
+6. 什么是ipc，如何进程ipc
+
+
+
+
+
+## 5Answer：
+
+1. 进程是正在运行的程序 运行在内存中
+
+   程序是静态的存储在硬盘中的数据
+
+2. 三次握手和四次挥手：
+
+   第一次握手：
+
+   SYN=1 seq=x
+
+   第二次握手：
+
+   SYN=1 ACK=1 seq=y ack=x+1
+
+   第三次握手：
+
+   ACK=1 seq=x+1 ack=y+1
+
+   四次挥手
+
+   第一次挥手：
+
+   FIN=1 seq=u
+
+   第二次挥手
+
+   ACK=1 seq=v ack=u+1
+
+   第三次挥手
+
+   FIN=1 seq=w ack=u+1
+
+   第四次挥手
+
+   ACK=1 seq=u+1 ack=w+1
+
+3. 多进程服务器并发
+
+   ```python
+   # server
+   import multiprocessing
+   from socket import socket, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
+   
+   
+   def work(conn, addr):
+       while True:
+           data_from_client = conn.recv(1024)
+           if not data_from_client:
+               conn.close()
+               break
+           print(f"来自于客户端 {addr} 的数据 :>>>> {data_from_client.decode()}")
+           data_from_client_upper = data_from_client.decode().upper()
+           conn.send(data_from_client_upper.encode())
+   
+   
+   def main():
+       server = socket(family=AF_INET, type=SOCK_STREAM)
+       server.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+       server.bind(('127.0.0.1', 9696))
+   
+       server.listen(5)
+   
+       while True:
+           # 负责接收每一个客户端的链接对象
+           conn, addr = server.accept()
+           # 将当前的链接对象创建程一个子进程
+           task = multiprocessing.Process(
+               target=work, args=(conn, addr)
+           )
+           # 让当前子进程启动
+           task.start()
+   
+   
+   if __name__ == '__main__':
+       main()
+   ```
+
+   ```python
+   # client
+   from socket import socket, AF_INET, SOCK_STREAM
+   
+   client = socket(family=AF_INET, type=SOCK_STREAM)
+   
+   client.connect(('127.0.0.1', 9696))
+   
+   while True:
+       msg = input('请输入要发送的消息：')
+       if not msg:
+           continue
+       client.send(msg.encode('utf-8'))
+       data_from_server = client.recv(1024)
+       print(f"服务器返回的数据：{data_from_server.decode('utf-8')}")
+   ```
+
+4. 守护进程
+
+   daemon，在计算机系统启动时就已经运行，并一直在后台运行的一类特殊进程
+
+   ```python
+   # 【三】主进程死亡之后子进程随之死亡
+   def process_daemon():
+       # 方式一：在创建当前子进程的时候就在子进程中增加 守护进程
+   
+       # 方式二：先创建一个子进程对象，然后给子进程对象加一个守护进程
+       process_dream = Process(target=task, args=("def",))
+       process_dream.daemon = True
+   
+       process_dream.start()
+   
+       # process_dream.daemon = True
+       # AssertionError: process has already started
+   ```
+
+5. 生产者模型与消费者模型
+
+   生产者的主要任务是将数据或任务添加到队列中
+
+   消费者的主要任务是从队列中取出数据或任务
+
+   ```python
+   def producer(name, food, queue):
+       """
+       生产者生产数据
+       :param name:生产者名字
+       :param food: 生产者做出来的食物
+       :param queue: 队列
+       :return:
+       """
+       for i in range(2):
+           # 生产数据
+           data = f"当前大厨 {name} 生产出了第 {i} 份 {food}!"
+           # 模拟延迟
+           time.sleep(random.randint(1,4))
+           # 添加数据
+           queue.put(food)
+           print(f"生产者 {name} :>>>>  {data}")
+   
+       # *****
+       # 直接使用 joinablequeue 内置的方法增加结束标志
+       queue.join()
+   
+   
+   def customer(name, queue):
+       """
+       消费者消费数据
+       :param name:消费者名字
+       :param queue: 队列
+       :return:
+       """
+       while True:
+           # 取出食物
+           food = queue.get()
+           # 模拟延迟
+           time.sleep(random.randint(1, 4))
+           print(f"{name} 正在消费 {food}")
+           # *****
+           queue.task_done()
+   
+   
+   def process_one():
+       from multiprocessing import JoinableQueue
+       # 1.建立媒介 - 创建队列对象
+       # *****
+       queue = JoinableQueue()
+   
+       # 2.创建生产者模型
+       producer_one = Process(target=producer, args=("onef", "ice", queue))
+       producer_two = Process(target=producer, args=("twof", "cream", queue))
+   
+       # 3.创建消费者模型
+       customer_one = Process(target=customer, args=("onee", queue))
+       customer_two = Process(target=customer, args=("twoe", queue))
+   
+       # 给消费者加上守护进程 主进程存在就会一直存活
+       # 只要主进程一死，守护进程立马跟着结束
+       customer_one.daemon = True
+       customer_two.daemon = True
+   
+       process_list = [producer_one, producer_two, customer_one, customer_two]
+   
+       # 4.启动生产者和消费者
+       [task.start() for task in process_list]
+   
+       # 5.阻塞等待所有生产者和消费者结束
+       producer_one.join()
+       producer_two.join()
+   
+       """
+       生产者 onef :>>>>  当前大厨 onef 生产出了第 0 份 ice!
+       生产者 twof :>>>>  当前大厨 twof 生产出了第 0 份 cream!
+       onee 正在消费 ice
+       生产者 onef :>>>>  当前大厨 onef 生产出了第 1 份 ice!
+       twoe 正在消费 cream
+       生产者 twof :>>>>  当前大厨 twof 生产出了第 1 份 cream!
+       twoe 正在消费 cream
+       onee 正在消费 ice
+       """
+       # 在生产者生产完所有数据的结尾增加一个结束生产的标志
+       # 当消费者最后获取到结束标志的时候就将整个子进程结束掉
+   
+   
+   if __name__ == '__main__':
+       process_one()
+   ```
+
+6. IPC是inter process communication 进程间通信
+
+   通过一个中间介质就可以实现进程间的通信
+
+   multiprocessing 队列&管道
+
+   ```python
+   from multiprocessing import Process, Queue
+   
+   
+   # 【一】子进程与主进程之间进行通信
+   def producer(queue):
+       print(f"来自主进程的数据 :>>> {queue.get()}")
+       queue.put(f"dau process")
+   
+   
+   def process():
+       # 1.创建队列用于存储数据
+       queue = Queue()
+       # 2.传入数据
+       queue.put(f"main process")
+       # 3.创建子进程
+       process_daughter = Process(
+           target=producer,
+           args=(queue,)
+       )
+       # 4.启动子进程
+       process_daughter.start()
+       # 如果这里get 会发现取不到数据 会被阻塞 是因为子进程时间太短还没有结束
+       # 5.等待主进程结束前结束子进程
+       process_daughter.join()
+       print(f"来自子进程的数据 :>>> {queue.get()}")
+   """
+   来自主进程的数据 :>>> main process
+   来自子进程的数据 :>>> dau process
+   """
+   
+   
+   def producer_one(queue, name):
+       # 负责放数据
+       print(f"{name} put")
+       queue.put(f"dau process one put")
+   
+   
+   def producer_two(queue, name):
+       # 负责取数据
+       print(f"{name} get:>>> {queue.get()}")
+   
+   
+   # 子进程与子进程之间实现通信
+   def process_dtod():
+       # 1.生成Queue对象
+       queue = Queue()
+       # 2.创建两个子进程
+       a = Process(target=producer_one, args=(queue, 1))
+       b = Process(target=producer_two, args=(queue, 2))
+   
+       # 3.挨个启动子进程
+       b.start()
+       a.start()
+   
+       # 4.阻塞进程
+       b.join()
+       a.join()
+   """
+   1 put
+   2 get:>>> dau process one put
+   """
+   
+   
+   if __name__ == '__main__':
+       process()
+       process_dtod()
+   ```
+
+   ```python
+   import random
+   import time
+   from multiprocessing import Pipe, Process
+   
+   
+   def producer(name, conn):
+       """
+       生产者生产数据
+       :param name: 生产者名字
+       :param conn: 管道对象
+       :return:
+       """
+       left_conn, right_conn = conn
+       # 把右侧管道关闭
+       right_conn.close()
+       for i in range(5):
+           # 生产数据
+           data = f"当前大厨 {name} 生产出了第{i}份!"
+   
+           # 从左侧管道向管道中添加数据
+           left_conn.send(data)
+           print(f"生产者 {name} :>>>>  {data}")
+           # # 模拟延迟
+           # time.sleep(random.randint(1, 4))
+       left_conn.close()
+   
+   
+   def customer(name, conn):
+       """
+       消费者消费数据
+       :param name: 消费者名字
+       :param conn: 队列
+       :return:
+       """
+       left_conn, right_conn = conn
+       # 把左侧管道关闭
+       left_conn.close()
+       while True:
+           try:
+               # 取出数据
+               food = right_conn.recv()
+               # 模拟延迟
+               time.sleep(random.randint(1, 4))
+               # 打印数据
+               print(f"消费者 {name} :>>>>  {food}")
+           except:
+               right_conn.close()
+               break
+   
+   
+   def process_one():
+       # 【1】建立媒介 --- 创建管道
+       left_conn, _right_conn = Pipe()
+       '''
+       (<multiprocessing.connection.Connection object at 0x12533fee0>, <multiprocessing.connection.Connection object at 0x12533feb0>)
+       '''
+   
+       customer_smile = Process(target=customer, args=("abc", (left_conn, _right_conn)))
+       customer_smile.start()
+   
+       # 生产数据
+       producer(name="zyx", conn=(left_conn, _right_conn))
+   
+       left_conn.close()
+       _right_conn.close()
+   
+       customer_smile.join()
+   
+   
+   """
+   生产者 zyx :>>>>  当前大厨 zyx 生产出了第0份!
+   生产者 zyx :>>>>  当前大厨 zyx 生产出了第1份!
+   生产者 zyx :>>>>  当前大厨 zyx 生产出了第2份!
+   生产者 zyx :>>>>  当前大厨 zyx 生产出了第3份!
+   生产者 zyx :>>>>  当前大厨 zyx 生产出了第4份!
+   消费者 abc :>>>>  当前大厨 zyx 生产出了第0份!
+   消费者 abc :>>>>  当前大厨 zyx 生产出了第1份!
+   消费者 abc :>>>>  当前大厨 zyx 生产出了第2份!
+   消费者 abc :>>>>  当前大厨 zyx 生产出了第3份!
+   消费者 abc :>>>>  当前大厨 zyx 生产出了第4份!
+   """
+   
+   if __name__ == '__main__':
+       process_one()
+   ```
+
+   
