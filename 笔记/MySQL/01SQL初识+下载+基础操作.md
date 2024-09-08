@@ -350,7 +350,7 @@ Threads: 1  Questions: 181  Slow queries: 0  Opens: 99  Flush tables: 1  Open ta
 - CREATE: 创建数据库和表等对象
 
 ```sql
-create database 数据库名字 ; 
+create database 数据库名字; 
 
 -- 如果当前数据库不存在则创建数据库 否则忽略
 create database if not exists 数据库名字 ;
@@ -394,27 +394,27 @@ show create database day01;
 
 ```sql
 mysql> show create database day01;
-+----------+-------------------------------------------------------------------+
-| Database | Create Database                                                   |
-+----------+-------------------------------------------------------------------+
-| day01    | CREATE DATABASE `day01` /*!40100 DEFAULT CHARACTER SET utf8mb4 */ |
-+----------+-------------------------------------------------------------------+
++----------+---------------------------------------------------------------------------------------------------------------------------------+
+| Database | Create Database                                                                                                                 |
++----------+---------------------------------------------------------------------------------------------------------------------------------+
+| day01    | CREATE DATABASE `day01` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */ |
++----------+---------------------------------------------------------------------------------------------------------------------------------+
 1 row in set (0.00 sec)
 ```
 
 ```sql
-create database if not exists day03 charset "gbk";
-show create database day03;
+create database if not exists day02 charset "gbk";
+show create database day02;
 ```
 
 ```sql
-mysql> show create database day03;
-+----------+---------------------------------------------------------------+
-| Database | Create Database                                               |
-+----------+---------------------------------------------------------------+
-| day03    | CREATE DATABASE `day03` /*!40100 DEFAULT CHARACTER SET gbk */ |
-+----------+---------------------------------------------------------------+
-1 row in set (0.01 sec)
+mysql> show create database day02;
++----------+--------------------------------------------------------------------------------------------------+
+| Database | Create Database                                                                                  |
++----------+--------------------------------------------------------------------------------------------------+
+| day02    | CREATE DATABASE `day02` /*!40100 DEFAULT CHARACTER SET gbk */ /*!80016 DEFAULT ENCRYPTION='N' */ |
++----------+--------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
 ```
 
 ### （3）修改数据库
@@ -426,19 +426,20 @@ alter database 数据库名字 charset "utf8mb4";
 ```
 
 ```sql
-alter database day03 charset "utf8mb4";
+alter database day02 charset "utf8mb4";
+mysql> show create database day02;
 ```
 
 ```sql
-mysql> alter database day03 charset "utf8mb4";
+mysql> alter database day02 charset "utf8mb4";
 Query OK, 1 row affected (0.00 sec)
 
-mysql> show create database day03;
-+----------+-------------------------------------------------------------------+
-| Database | Create Database                                                   |
-+----------+-------------------------------------------------------------------+
-| day03    | CREATE DATABASE `day03` /*!40100 DEFAULT CHARACTER SET utf8mb4 */ |
-+----------+-------------------------------------------------------------------+
+mysql> show create database day02;
++----------+---------------------------------------------------------------------------------------------------------------------------------+
+| Database | Create Database                                                                                                                 |
++----------+---------------------------------------------------------------------------------------------------------------------------------+
+| day02    | CREATE DATABASE `day02` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */ |
++----------+---------------------------------------------------------------------------------------------------------------------------------+
 1 row in set (0.00 sec)
 ```
 
@@ -450,7 +451,8 @@ drop database if exists 数据库名字;
 ```
 
 ```sql
-drop database if exists day01;
+mysql> drop database if exists day02;
+Query OK, 0 rows affected (0.01 sec)
 ```
 
 ## 5.2 操作数据表
@@ -554,27 +556,25 @@ show create table user;
 
 ```sql
 mysql> show create table user;
-+-------+------------------------------------------------------------------------------------------------------------------------------+
-| Table | Create Table                                                                                                                 |
-+-------+------------------------------------------------------------------------------------------------------------------------------+
++-------+------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table | Create Table
+   |
++-------+------------------------------------------------------------------------------------------------------------------------------------------------------+
 | user  | CREATE TABLE `user` (
   `name` varchar(10) DEFAULT NULL,
-  `age` int(4) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 |
-+-------+------------------------------------------------------------------------------------------------------------------------------+
+  `age` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
++-------+------------------------------------------------------------------------------------------------------------------------------------------------------+
 1 row in set (0.01 sec)
 
-mysql> show create table  user \G;
+mysql> show create table user\G
 *************************** 1. row ***************************
        Table: user
 Create Table: CREATE TABLE `user` (
   `name` varchar(10) DEFAULT NULL,
-  `age` int(4) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  `age` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 1 row in set (0.00 sec)
-
-ERROR:
-No query specified
 ```
 
 ```sql
@@ -582,12 +582,12 @@ describe user;
 ```
 
 ```sql
-mysql> describe user;.
+mysql> describe user;
 +-------+-------------+------+-----+---------+-------+
 | Field | Type        | Null | Key | Default | Extra |
 +-------+-------------+------+-----+---------+-------+
 | name  | varchar(10) | YES  |     | NULL    |       |
-| age   | int(4)      | YES  |     | NULL    |       |
+| age   | int         | YES  |     | NULL    |       |
 +-------+-------------+------+-----+---------+-------+
 2 rows in set (0.00 sec)
 ```
@@ -691,11 +691,11 @@ mysql> desc new_user;
 +--------+--------------+------+-----+---------+-------+
 | Field  | Type         | Null | Key | Default | Extra |
 +--------+--------------+------+-----+---------+-------+
-| id     | int(4)       | YES  |     | NULL    |       |
+| id     | int          | YES  |     | NULL    |       |
 | name   | varchar(255) | YES  |     | NULL    |       |
 | addr   | varchar(255) | YES  |     | NULL    |       |
-| age    | int(4)       | YES  |     | NULL    |       |
-| gender | int(4)       | YES  |     | NULL    |       |
+| age    | int          | YES  |     | NULL    |       |
+| gender | int          | YES  |     | NULL    |       |
 +--------+--------------+------+-----+---------+-------+
 5 rows in set (0.00 sec)
 ```
@@ -732,17 +732,18 @@ mysql> desc new_user;
 +--------+--------------+------+-----+---------+-------+
 | Field  | Type         | Null | Key | Default | Extra |
 +--------+--------------+------+-----+---------+-------+
-| id     | int(4)       | YES  |     | NULL    |       |
+| id     | int          | YES  |     | NULL    |       |
 | name   | varchar(255) | YES  |     | NULL    |       |
-| age    | int(4)       | YES  |     | NULL    |       |
-| gender | int(4)       | YES  |     | NULL    |       |
+| age    | int          | YES  |     | NULL    |       |
+| gender | int          | YES  |     | NULL    |       |
 +--------+--------------+------+-----+---------+-------+
 4 rows in set (0.00 sec)
 ```
 
 ```sql
 mysql> drop table new_user;
-Query OK, 0 rows affected (0.01 sec)
+Query OK, 0 rows affected (0.03 sec)
+
 mysql> show tables;
 Empty set (0.00 sec)
 ```
@@ -765,11 +766,11 @@ mysql> show tables;
 1 row in set (0.00 sec)
 
 mysql> desc t1;
-+-------+---------+------+-----+---------+-------+
-| Field | Type    | Null | Key | Default | Extra |
-+-------+---------+------+-----+---------+-------+
-| id    | int(11) | YES  |     | NULL    |       |
-+-------+---------+------+-----+---------+-------+
++-------+------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++-------+------+------+-----+---------+-------+
+| id    | int  | YES  |     | NULL    |       |
++-------+------+------+-----+---------+-------+
 1 row in set (0.00 sec)
 ```
 
@@ -788,7 +789,7 @@ INSERT INTO 表名(字段名1,字段名2,....) VALUES(字段值1,字段值2, ...
 ```sql
 create table t2(
 	name varchar(25),
-  age int(4)
+    age int(4)
 );
 
 -- 插入一条数据 名字是 Dream 年龄是 18
@@ -812,36 +813,36 @@ mysql> desc t2;
 | Field | Type        | Null | Key | Default | Extra |
 +-------+-------------+------+-----+---------+-------+
 | name  | varchar(25) | YES  |     | NULL    |       |
-| age   | int(4)      | YES  |     | NULL    |       |
+| age   | int         | YES  |     | NULL    |       |
 +-------+-------------+------+-----+---------+-------+
 2 rows in set (0.00 sec)
 
 
-mysql> INSERT INTO t2 (name,age) VALUES ("dream",18);
+mysql> insert into t2(name, age) values ("sheenagh", 23);
 Query OK, 1 row affected (0.01 sec)
 
 mysql> select * from t2;
-+-------+------+
-| name  | age  |
-+-------+------+
-| dream |   18 |
-+-------+------+
++----------+------+
+| name     | age  |
++----------+------+
+| sheenagh |   23 |
++----------+------+
 1 row in set (0.00 sec)
 ```
 
 ```sql
-mysql> INSERT INTO t2 (name,age) VALUES ("dream_one",18),("dream_two",28);
-Query OK, 2 rows affected (0.00 sec)
+mysql> insert into t2 (name, age) values ("alen", 18),("hua", 30);
+Query OK, 2 rows affected (0.01 sec)
 Records: 2  Duplicates: 0  Warnings: 0
 
 mysql> select * from t2;
-+-----------+------+
-| name      | age  |
-+-----------+------+
-| dream     |   18 |
-| dream_one |   18 |
-| dream_two |   28 |
-+-----------+------+
++----------+------+
+| name     | age  |
++----------+------+
+| sheenagh |   23 |
+| alen     |   18 |
+| hua      |   30 |
++----------+------+
 3 rows in set (0.00 sec)
 ```
 
@@ -863,13 +864,13 @@ select name from t2;
 
 ```sql
 mysql> select name from t2;
-+-----------+
-| name      |
-+-----------+
-| dream     |
-| dream_one |
-| dream_two |
-+-----------+
++----------+
+| name     |
++----------+
+| sheenagh |
+| alen     |
+| hua      |
++----------+
 3 rows in set (0.00 sec)
 ```
 
@@ -880,23 +881,23 @@ update 表名 set 原字段名=新字段值 where 筛选条件;
 ```
 
 ```sql
--- 修改表 t2 中的姓名为 dream_one 这个人的名字为 38 
-update t2 set age=38 where name="dream_one";
+-- 修改表 t2 中的姓名为 hua 这个人的年龄为 20 
+mysql> update t2 set age=20 where name = "hua";
 ```
 
 ```sql
-mysql> update t2 set age=38 where name="dream_one";
-Query OK, 1 row affected (0.00 sec)
+mysql> update t2 set age=20 where name = "hua";
+Query OK, 1 row affected (0.01 sec)
 Rows matched: 1  Changed: 1  Warnings: 0
 
-mysql> select name,age  from t2;
-+-----------+------+
-| name      | age  |
-+-----------+------+
-| dream     |   18 |
-| dream_one |   38 |
-| dream_two |   28 |
-+-----------+------+
+mysql> select name, age from t2;
++----------+------+
+| name     | age  |
++----------+------+
+| sheenagh |   23 |
+| alen     |   18 |
+| hua      |   20 |
++----------+------+
 3 rows in set (0.00 sec)
 ```
 
@@ -908,47 +909,47 @@ delete from 表名 where 条件;
 ```
 
 ```sql
--- 删除年龄为 38 岁的 这个人
-delete from t2 where age=38;
+-- 删除年龄为 18 岁的 这个人
+delete from t2 where age=18;
 ```
 
 ```sql
-mysql> delete from t2 where age=38;
-Query OK, 1 row affected (0.00 sec)
+mysql> delete from t2 where age=18;
+Query OK, 1 row affected (0.01 sec)
 
-mysql> select name,age  from t2;
-+-----------+------+
-| name      | age  |
-+-----------+------+
-| dream     |   18 |
-| dream_two |   28 |
-+-----------+------+
+mysql> select name, age from t2;
++----------+------+
+| name     | age  |
++----------+------+
+| sheenagh |   23 |
+| hua      |   20 |
++----------+------+
 2 rows in set (0.00 sec)
 ```
 
 ```sql
-mysql> insert into t2(name,age) values("dream_one",18);
-Query OK, 1 row affected (0.00 sec)
+mysql> insert into t2(name,age) values("xiaohua",20);
+Query OK, 1 row affected (0.01 sec)
 
-mysql> select name,age  from t2;
-+-----------+------+
-| name      | age  |
-+-----------+------+
-| dream     |   18 |
-| dream_two |   28 |
-| dream_one |   18 |
-+-----------+------+
+mysql> select name, age from t2;
++----------+------+
+| name     | age  |
++----------+------+
+| sheenagh |   23 |
+| hua      |   20 |
+| xiaohua  |   20 |
++----------+------+
 3 rows in set (0.00 sec)
 
-mysql> delete from t2 where age=18;
-Query OK, 2 rows affected (0.00 sec)
+mysql> delete from t2 where age=20;
+Query OK, 2 rows affected (0.01 sec)
 
-mysql> select name,age  from t2;
-+-----------+------+
-| name      | age  |
-+-----------+------+
-| dream_two |   28 |
-+-----------+------+
+mysql> select name, age from t2;
++----------+------+
+| name     | age  |
++----------+------+
+| sheenagh |   23 |
++----------+------+
 1 row in set (0.00 sec)
 ```
 
@@ -999,17 +1000,19 @@ mysql> show engines;
 +--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
 | Engine             | Support | Comment                                                        | Transactions | XA   | Savepoints |
 +--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
-| InnoDB             | DEFAULT | Supports transactions, row-level locking, and foreign keys     | YES          | YES  | YES        |
-| MRG_MYISAM         | YES     | Collection of identical MyISAM tables                          | NO           | NO   | NO         |
-| PERFORMANCE_SCHEMA | YES     | Performance Schema                                             | NO           | NO   | NO         |
-| BLACKHOLE          | YES     | /dev/null storage engine (anything you write to it disappears) | NO           | NO   | NO         |
-| CSV                | YES     | CSV storage engine                                             | NO           | NO   | NO         |
-| MyISAM             | YES     | MyISAM storage engine                                          | NO           | NO   | NO         |
-| ARCHIVE            | YES     | Archive storage engine                                         | NO           | NO   | NO         |
 | MEMORY             | YES     | Hash based, stored in memory, useful for temporary tables      | NO           | NO   | NO         |
+| MRG_MYISAM         | YES     | Collection of identical MyISAM tables                          | NO           | NO   | NO         |
+| CSV                | YES     | CSV storage engine                                             | NO           | NO   | NO         |
 | FEDERATED          | NO      | Federated MySQL storage engine                                 | NULL         | NULL | NULL       |
+| PERFORMANCE_SCHEMA | YES     | Performance Schema                                             | NO           | NO   | NO         |
+| MyISAM             | YES     | MyISAM storage engine                                          | NO           | NO   | NO         |
+| InnoDB             | DEFAULT | Supports transactions, row-level locking, and foreign keys     | YES          | YES  | YES        |
+| ndbinfo            | NO      | MySQL Cluster system information storage engine                | NULL         | NULL | NULL       |
+| BLACKHOLE          | YES     | /dev/null storage engine (anything you write to it disappears) | NO           | NO   | NO         |
+| ARCHIVE            | YES     | Archive storage engine                                         | NO           | NO   | NO         |
+| ndbcluster         | NO      | Clustered, fault-tolerant tables                               | NULL         | NULL | NULL       |
 +--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
-9 rows in set (0.00 sec)
+11 rows in set (0.00 sec)
 ```
 
 ## 6.3 测试不同引擎之间的异同
@@ -1022,7 +1025,7 @@ create table t3(id int) engine=blackhole;
 create table t4(id int) engine=memory;
 ```
 
-![img](assets/2322215-20230630204314065-1359456068.png)
+![image-20240908163421859](assets/image-20240908163421859.png)
 
 ```sql
 # t1 ---> innodb 支持事务/行锁/外键
@@ -1130,19 +1133,19 @@ create table 表名(
 
 ```sql
 -- 【1】创建表的时候字段名和字段类型是必须的
-create table t5(id);
+mysql> create table t5(id);
 -- ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 1
 
 create table t5(id int);
 # Query OK, 0 rows affected (0.64 sec)
 
 -- int 类型 的默认长度是 11
-desc t5;
-+-------+---------+------+-----+---------+-------+
-| Field | Type    | Null | Key | Default | Extra |
-+-------+---------+------+-----+---------+-------+
-| id    | int(11) | YES  |     | NULL    |       |
-+-------+---------+------+-----+---------+-------+
+mysql> desc t5;
++-------+------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++-------+------+------+-----+---------+-------+
+| id    | int  | YES  |     | NULL    |       |
++-------+------+------+-----+---------+-------+
 1 row in set (0.00 sec)
 
 -- 【2】最后一个字段不允许加 , 
@@ -1186,12 +1189,13 @@ mysql> desc t7;
 
 ```sql
 create table t8(age int);
+-- Query OK, 0 rows affected (0.02 sec)
 
 insert t8 values('dr');
 -- ERROR 1366 (HY000): Incorrect integer value: 'dr' for column 'age' at row 1
 
 insert t8 values(2147483647);
--- Query OK, 1 row affected (0.00 sec)
+-- Query OK, 1 row affected (0.01 sec)
 
 insert t8 values(2147483648);
 -- ERROR 1264 (22003): Out of range value for column 'age' at row 1
@@ -1207,12 +1211,12 @@ insert t8 values(2147483648);
 
 ```sql
 mysql> desc t8;
-+-------+---------+------+-----+---------+-------+
-| Field | Type    | Null | Key | Default | Extra |
-+-------+---------+------+-----+---------+-------+
-| age   | int(11) | YES  |     | NULL    |       |
-+-------+---------+------+-----+---------+-------+
-1 row in set (0.01 sec)
++-------+------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++-------+------+------+-----+---------+-------+
+| age   | int  | YES  |     | NULL    |       |
++-------+------+------+-----+---------+-------+
+1 row in set (0.00 sec)
 ```
 
 
