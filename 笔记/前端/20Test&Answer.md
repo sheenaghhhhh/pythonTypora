@@ -172,12 +172,6 @@
 
 3. 你知道哪些魔法方法，各自的应用场景
 
-   init 设置了 self.name= "sheenagh"
-
-   拿到的方法：
-
-   . 、 getattr \ getitem
-
    ```python
    # __init__      ：初始化对象时触发
    # __del__      ：删除对象时触发
@@ -194,7 +188,7 @@
    # __getitem__   ：将对象当作list使用
    # __delitem__   ：列表删除值
    ```
-
+   
 4. 方法属性变数据属性的方式
 
    使用@property
@@ -214,3 +208,81 @@
    通过一个中间介质就可以实现进程间的通信
 
    multiprocessing 队列process&管道queue
+
+
+
+获取对象属性的方法：
+
+1. 点操作符  对象.属性
+2. getattr函数  getattr(对象, "属性")
+3. `__dict__`属性   `对象.__dict__`输出所有属性的字典
+4. 在类的方法中访问属性  self.属性
+
+
+
+
+
+## 03
+
+1. 什么是事务，事务的四大特点，如何开启事务
+
+   一系列操作的集合
+
+   ACID 原子性 一致性 隔离性 持久性
+
+   start transaction
+
+2. SQL语句的注意事项有哪些
+
+   关键字不区分大小写
+
+   以;英文分号结尾
+
+   关键词不能跨行或简写
+
+   如果数据库名 表名 字段名 与 关键字冲突 用反引号圈起来
+
+3. 什么是协程对象和协程函数
+
+   协程对象 是 协程函数被调用后的返回值
+
+   协程函数是 加上 asynic 关键字的函数
+
+4. 拼表的方式有哪些，默写SQL
+
+   ```sql
+   # inner join
+   # left join
+   # right join
+   # union join
+   
+   select *
+   from emp
+   xx join dep on emp.dep_id = dep.id
+   
+   # union
+   select *
+   from emp
+   left join dep on emp.dep_id = dep.id
+   union
+   select *
+   from emp
+   right join dep on emp.dep_id = dep.id
+   ```
+
+5. 什么是子查询，什么是联表查询
+
+   子查询：把一个查询的结果作为另一个查询的查询条件
+
+   联表查询：把多张表的数据拼接到一张表中 在这张表中查询想要的数据
+
+6. 什么是闭包函数
+
+   函数内部再定义一个函数 并且这个函数用到了外部函数的变量
+
+
+
+
+
+
+
