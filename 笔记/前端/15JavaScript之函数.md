@@ -215,7 +215,7 @@ VM1390:1 Uncaught ReferenceError: userName is not defined
 ## 13 函数的全局变量与局部变量
 
 ```js
-// 和Python的
+// 和Python的类似
 
 var city = "BeiJing";
 function f() {

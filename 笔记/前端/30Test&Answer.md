@@ -222,7 +222,7 @@
 
 
 
-## 03
+## 04
 
 1. 什么是事务，事务的四大特点，如何开启事务
 
@@ -284,5 +284,330 @@
 
 
 
+## 05
+
+1. js函数有可变长位置参数吗，如何处理多余的位置参数
+
+   某种程度上来说 js中没有可变长位置参数。 在js中并不区分位置参数和关键字参数。
+
+   在js中可变长参数有两种写法
+
+   1.可以使用arguments 会接受所有实参
+
+   因此可以接收到多余的位置参数 并不进行多余处理
+
+   2....rest 这是ES6的语法 区别大致在于 argument不是真正的数组 不能和箭头函数结合使用；而...rest参数支持所有数组方法 可以在箭头使用，并且最重要的是，他是最后一个参数，只能捕获多余的、没有被定义的参数，而arguments捕获所有参数
+
+2. http协议的特点，什么是http协议
+
+   超文本传输协议 特点包括：
+
+   基于请求和响应的模型
+
+   基于TCP和IP之上的应用层协议
+
+   无状态
+
+   短连接
+
+3. tcp服务端如何响应浏览器的请求，写出示例代码
+
+   ```python
+   import socket
+   
+   # 服务端
+   server = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
+   addr = "127.0.0.1"
+   port = 9696
+   server.bind((addr, port))
+   server.listen(5)
+   client_socket, client_addr = server.accept()
+   data_from_client = client_socket.recv(1024)
+   
+   # 响应
+   data_to_client = f"你好!我是服务端!{client_addr}"
+   client_socket.send(data_to_client.encode("utf-8"))
+   
+   client_socket.close()
+   server.close()
+   ```
+
+4. Python查询MySQL数据的方式有哪些
+
+   f"" 字符串格式化
+
+   % 也是字符串格式化
+
+   %s 占位符
+
+   直接写
+
+5. 什么是SQL注入问题，如何解决
+
+   利用SQL的漏洞
+
+   查询数据的时候 使用了自己字符串拼接语法 把 -- 作为注释内容 导致SQL失效 无需用户名就可以对数据进行操作
+
+   解决方案
+
+   SQL语句的站位语法
+
+   ```python
+   sql = "select * from user where username=%(username)s and password=%(password)s;"
 
 
+
+
+
+## 06
+
+1. 面向对象三大特性
+
+   封装
+
+   多态
+
+   继承
+
+2. 做一个红色3像素的直线边框如何处理
+
+   ```css
+   border: 3px solid red;
+   ```
+
+3. 想要对当前窗口的网址进行判断，如果是百度就提示欢迎，如果不是就提示输入正确网址
+
+   ```js
+   function checkHerf() {
+       if (location.href === "https://www.baidu.com/") {
+   		alert("欢迎");
+   	}
+   	else {
+   		resultWeb=prompt("请输入正确网址 :>>> ", 0);
+   	}
+   }
+   ```
+
+4. 做一个浏览器交互操作，获取到用户输入的网址并进行跳转
+
+   ```js
+   function goUrl() {
+       tagUrl = prompt("请输入跳转网址 :>>> ");
+       if (tagUrl.indexOf("http") === -1 || tagUrl.indexOf("https") === -1) {
+           alert("请输入正确的网址");
+       } else {
+           window.open(tagUrl, "blank")
+       }
+   }
+   
+   
+   
+   
+   resultWeb=prompt("请输入网址 :>>> ", 0);
+   location.assign(resultWeb);
+   ```
+
+   
+
+
+
+## 07
+
+1. 设计一个页面交互程序，让用户点击页面上的登录按钮，弹出输入框，输入用户名跟密码，设定一个自己定义的用户名和密码，如果正确就跳转到百度，不正确弹出警告框
+
+   ```html
+   // 点击按钮就能弹出输入框
+   // .onclick
+   // 用户名和密码两个东西都要输入 2个prompt
+   // 判定 正确-window.location.href
+   // 不正确-alert
+   
+   
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+       <meta charset="UTF-8">
+       <title>Title</title>
+       <!--    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
+       <!--    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">-->
+       <!--    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+   
+   </head>
+   <body>
+   
+   <!-- 定义一个 button 按钮 -->
+   <!--<button id="btn">点我登陆</button>-->
+   
+   <div id="d1">
+       <p id="p1">
+   
+       </p>
+   </div>
+   <input type="button" id="btn" value="等">
+   <script>
+       // 获取到当前的按钮标签
+       var btnEle = document.getElementById("btn")
+       // 点击页面上的登录按钮
+       btnEle.addEventListener("click", () => {
+           username = window.prompt("请输入用户名 ")
+           password = window.prompt("请输入密码 ")
+   
+           if (username === "aaa" && password === "bbb") {
+               window.open("https://www.baidu.com")
+           } else {
+               window.alert("666")
+           }
+       })
+   
+   </script>
+   </body>
+   </html>
+   ```
+
+2. js中对象的构建方式有哪些
+
+   ```js
+   // 1.直接构建
+   var obj = {}
+   var obj = {name: "sheenagh", age:23}
+   
+   // 2.构造函数来生成对象
+   var obj = new Object()
+   
+   // 3.自定义对象
+   function Person(name, age) {
+       this.name = name
+       this.age = age
+   }
+   var obj = Person("sheenagh", 23)
+   
+   // 4.ES6中的新语法
+   class Student {
+       constructor(name, gender) {
+           this.name = name
+           this.gender = gender
+       }
+   }
+   
+   var obj = new Student("sheenagh", "female")
+   ```
+
+3. js中对象的特性有哪些
+
+   无序的属性集合
+
+   键值对
+
+   值可以是数据或函数
+
+   可以枚举 可以封装 可以转换为JSON格式
+
+4. 操作标签属性的操作有哪些
+
+   ```js
+   d=document.getElementById("d")
+   // 1
+   // 获取属性值
+   d.getAttribute("class")
+   // 设置
+   d.setAttribute("attributename", "value")
+   // 删除
+   d.removeAttribute("attributename")
+   // 访问
+   d.attributeName
+   d.hasAttribure("attributename")
+   
+   // 2
+   // 属性值数组
+   list=d.classList
+   // 添加属性
+   list.add("new")
+   // 删除
+   list.remove("new")
+   // 切换 如果有就删除 就添加
+   list.toggle("haha")
+   ```
+
+5. 如何获取标签的所有class值
+
+   ```js
+   d.classList
+   d.getAttribute("class").split(" ")
+   ```
+
+   
+
+
+
+## 08
+
+1. 默写开关灯事件(jq或js都行)
+
+   ```js
+   btnEle = document.getElementById("btn")
+   divEle = document.getElementById("change")
+   btnEle.onclick = function() {
+   	divEle.classList.toggle("change_red")
+   }
+   
+   // css
+   .change_red {
+       background-color: red;
+   }
+   ```
+
+2. js绑定事件的方式有哪些，jq绑定事件的方式有哪些
+
+   ```js
+   divEle = document.getElementById("change")
+   // 1.传统
+   divEle.addEventListener(
+       "", function () {
+           //
+       }
+   )
+   
+   // 2.提前定义 绑定
+   function abcMethod() {
+       divEle.setAttribute(
+           "style", "background-color: red"
+       )
+   }
+   
+   // 1. .on
+   $(selector).on(eventName, eventHandler);
+   
+   // 2.快捷
+   $('#myButton').click(function() {
+       // 处理点击事件的代码
+   });
+   ```
+
+3. 给输入框绑定时间，聚焦的时候增加一个3像素红色的直线，失去焦点时，输入框变为绿色的背景色
+
+   ```js
+   inputEle = document.getElementById("go")
+   
+   inputEle.onfocus = function() {
+       inputEle
+   }
+   
+   inputEle.onblur = function() {
+       inputEle.style.backGroundColor = "green"
+   }
+   ```
+
+   
+
+4. 给输入框的提交按钮绑定事件，阻止提交按钮的自动刷新并校验用户名和密码是否和自定义的用户名和密码一致
+
+   ```js
+   $("#submit").click(function (e) {
+       // 阻止当前标签的默认行为
+       e.preventDefault()
+       
+       // 组织默认行为和校验是两块 无关的 
+   })
+   ```
+
+   
