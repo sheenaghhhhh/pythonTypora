@@ -443,7 +443,7 @@ classValue.toggle("abc")
 
 
 
-## 11 绑定事件的两种方式
+## 9 绑定事件的两种方式
 
 ```js
 // 1.方式一：传统添加
@@ -485,7 +485,7 @@ function blurMethod() {
 
 
 
-## 12 task
+## 10 task
 
 ```js
 // 【一】开关灯

@@ -1,6 +1,82 @@
 # 23 jQuery事件
 
 ## 1 jQuery绑定事件的两种方式
+```js
+// 【jQuery中绑定事件】
+
+// 1.方式一：
+// 获取到当前的标签对象直接 .click 绑定事件
+// 点击事件
+$("#btn").click(
+    ()=>{
+        alert(666)
+    }
+)
+
+// 聚焦事件
+$("#username").focus(() => {
+    $("#username").css("color", "red")
+})
+
+
+// 2.方式二：绑定事件类型去绑定事件
+// 获取到当前标签对象然后 .on绑定事件类型
+
+$("#btn").on("click", () => {
+    alert(666)
+})
+```
+
+
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./query.min.js"></script>
+</head>
+<body>
+<div id="d1" class="name username password pwd ">
+    这是 一段文字
+
+    <p>
+        这是div标签内部的p标签
+    </p>
+</div>
+<div id="d2">
+    这是第二段文字
+</div>
+
+<p>
+    username : <input type="text" id="username">
+</p>
+
+<p>
+    男 : <input type="radio" id="gender_male">
+    女 : <input type="radio" id="gender_female">
+</p>
+
+<button id="btn">点我有惊喜</button>
+<script>
+    $("#btn").on("click", () => {
+        alert(666)
+    })
+    // $("#btn").click(
+    //     () => {
+    //         alert(666)
+    //     }
+    // )
+    $("#username").focus(() => {
+        $("#username").css("color", "red")
+    })
+
+</script>
+</body>
+</html>
+```
+
 
 
 
@@ -49,8 +125,6 @@
 </body>
 </html>
 ```
-
-
 
 
 
@@ -129,8 +203,6 @@
 </body>
 </html>
 ```
-
-
 
 
 
@@ -219,35 +291,199 @@
 
 ## 5 返回顶部
 
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap-grid.min.css"></script>
+    <style>
+        .hide {
+            display: none;
+        }
+        #d1 {
+            position : fixed;
+            background-color: blue;
 
+            right: 20px;
+            bottom:20px;
+            height:50px;
+            width:50px;
+        }
+
+    </style>
+</head>
+<body>
+
+<a href="" id="d1"></a>
+
+<div style="height: 500px;background-color: red;"></div>
+<div style="height: 500px;background-color: green;"></div>
+<div style="height: 500px;background-color: orange;"></div>
+
+<a href="#d1" class="hide">回到顶部</a>
+
+<script>
+    $(window).scroll(function(){
+        if ($(window).scrollTop() > 100){
+            $('#d1').removeClass('hide');
+        }else{
+            $('#d1').addClass('hide');
+        }
+    })
+</script>
+</body>
+</html>
+```
 
 
 
 ## 6 自定义登录校验
 
+- 在获取用户名和密码的时候，如果用户没有输入用户名和密码，自动提示
 
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap-grid.min.css"></script>
+
+</head>
+<body>
+<p>username:
+    <input type="text" id="username">
+    <span style="color: red"></span>
+</p>
+<p>password:
+    <input type="text" id="password">
+    <span style="color: red"></span>
+</p>
+<button id="button">提交</button>
+
+
+<script>
+    let $userName = $("#username");
+    let $password = $("#password");
+
+    $("#button").click(function () {
+        // 获取用户名和密码。进行校验
+        let username = $userName.val();
+        let password = $password.val();
+
+        if (!username) {
+            $userName.next().text("用户名不能为空!")
+        }
+
+        if (!password) {
+            $password.next().text("密码不能为空!")
+        }
+
+    });
+
+    $('input').focus(function () {
+        $(this).next().text('')
+    })
+
+
+</script>
+
+</body>
+</html>
+```
 
 
 
 ## 7 input框实时监控
 
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap-grid.min.css"></script>
 
+</head>
+<body>
+
+<input type="text" id="d1">
+
+<script>
+    $('#d1').on('input', function () {
+        console.log(this.value);
+    })
+</script>
+
+</body>
+</html>
+```
 
 
 
 ## 8 hover事件
 
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap-grid.min.css"></script>
 
+</head>
+<body>
+
+<p id="d1">花前月下酒香封</p>
+
+<script>
+
+  $("#d1").hover( function(){ // 鼠标悬浮
+    alert(" enter")
+  },function(){
+    alert(" leave") // 鼠标离开
+  })
+
+</script>
+
+</body>
+</html>
+```
 
 
 
 ## 9 键盘按键监控事件
 
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap-grid.min.css"></script>
+
+</head>
+<body>
 
 
+<script>
+  $(window).keydown(function(event) {
+    console.log(event.keyCode)
+    if (event.keyCode === 16){
+      alert("shift key 触发")
+    }
+  })
 
+</script>
 
-
-
-
+</body>
+</html>
+```
 
