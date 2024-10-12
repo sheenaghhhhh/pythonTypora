@@ -557,3 +557,266 @@
 4. 什么是路径转换器，有哪些。如何自定义
 5. 什么是http协议，特点有哪些
 
+
+
+
+
+
+
+## 05
+
+1. CBV源码剖析
+
+2. Django的模版语法渲染可迭代类型有哪些特点
+
+   str list dict set tuple
+
+   渲染的时候 可以x 也可以 x.0 字典还可以x.key/value/age 但是都不可以x[0]等取值方式
+
+3. 反向解析如何传递参数给指定路由
+
+   ```python
+   
+   # 无名分组 直接用 args
+   url = reverse('article_detail', args=[42])
+   # 有名分组 直接用 args 或者 还可以用kwargs 但键 即下面的id 必须和路由重定义的关键字一致
+   url = reverse('article_detail', kwargs={'id': 42})
+   ```
+
+   
+
+
+
+## 06
+
+1. 列出你所知道的orm语句有哪些，各自的功能是什么
+
+   ```py
+   # model.objects. ...
+   # 1. .create(field_name=filed_value) 新增数据
+   # 2. model(field_name=filed_value).save() 新增数据
+   # 3. .all() 查询当前表中的所有数据
+   # 4. .filter(field_name=filed_value) 按照指定字段过滤数据 返回的是queryset对象
+   # 5. .filter(field_name=filed_value).first() 数据集中的第一条数据
+   # 6. .filter(field_name=filed_value).last() 数据集中的最后一条数据
+   # 7. .get(field_name=filed_value) 按照指定字段查找指定对象 多了报错 没有报错
+   # 8. .filter(field_name=filed_value).update(field_name=filed_value) 按照指定字段过滤数据后更新数据
+   # 9. .filter(field_name=filed_value).delete() 按照指定字段过滤后删除数据
+   # 10. .values(field_name) 提取当前数据集中的数据 返回的字典
+   # 11. .value_list(field_name) 提取当前数据集中的数据 返回的是元组
+   # 12. .values(field_name).distinct() 对指定字段进行去重
+   # 13. .order_by(field_name) 按照升序对数据进行排序
+   # 14. .order_by(-field_name) 按照降序对数据进行排序
+   # 15. .order_by(field_name).reverse() 对排序后的数据进行翻转
+   # 16. .count() 对查询到的数据进行计数
+   # 17. .exclude(field_name) 对查询到的结果排除掉指定字段的内容
+   # 18. .filter(field_name=filed_value).exists() 对过滤后的数据判断存在与否
+   # 补充 .query 查看当前 orm 语句对应的sql语句 ---> 必须是 queryset 对象
+   ```
+
+   
+
+2. 多对多创建表关系的几种方式和各自的特点
+
+   ```python
+   # 1.方案一：直接自己写第三张表
+   """
+   # 创建一张图书表
+   class Book(models.Model):
+       # 图书名
+       title = models.CharField(max_length=255, verbose_name="书籍名")
+       price = models.CharField(max_length=255, verbose_name="书籍价格")
+       # 注册时间 auto_now 在第一次创建的时候自动加上当前时间 更新的时候不变
+       create_time = models.DateTimeField(verbose_name="注册时间", auto_now_add=True)
+       # 更新时间 auto_now_add  第一注册会加 然后每一次更新数据 会随着更新
+       update_time = models.DateTimeField(verbose_name="更新", auto_now=True)
+   
+       class Meta:
+           db_table = "book"
+   
+   
+   # 创建一张作者表
+   class Author(models.Model):
+       name = models.CharField(max_length=32, verbose_name="姓名")
+       age = models.IntegerField(verbose_name="年龄")
+       # 注册时间 auto_now 在第一次创建的时候自动加上当前时间 更新的时候不变
+       create_time = models.DateTimeField(verbose_name="注册时间", auto_now_add=True)
+       # 更新时间 auto_now_add  第一注册会加 然后每一次更新数据 会随着更新
+       update_time = models.DateTimeField(verbose_name="更新", auto_now=True)
+   
+       class Meta:
+           db_table = "author"
+   
+   
+   class BookToAuthor(models.Model):
+       # 作者 CASCADE 级联更新 + 级联删除
+       author = models.ForeignKey(to="Author", on_delete=models.CASCADE)
+       # 图书
+       book = models.ForeignKey(to="Book", on_delete=models.CASCADE)
+       # 注册时间 auto_now 在第一次创建的时候自动加上当前时间 更新的时候不变
+       create_time = models.DateTimeField(verbose_name="注册时间", auto_now_add=True)
+       # 更新时间 auto_now_add  第一注册会加 然后每一次更新数据 会随着更新
+       update_time = models.DateTimeField(verbose_name="更新", auto_now=True)
+   
+       class Meta:
+           db_table = "author_to_book"
+   """
+   
+   # 2.方案二：自己创建第三张表 然后再某一张表创建多对多字段
+   """
+   # 创建一张图书表
+   class Book(models.Model):
+       # 图书名
+       title = models.CharField(max_length=255, verbose_name="书籍名")
+       price = models.CharField(max_length=255, verbose_name="书籍价格")
+       # 注册时间 auto_now 在第一次创建的时候自动加上当前时间 更新的时候不变
+       create_time = models.DateTimeField(verbose_name="注册时间", auto_now_add=True)
+       # 更新时间 auto_now_add  第一注册会加 然后每一次更新数据 会随着更新
+       update_time = models.DateTimeField(verbose_name="更新", auto_now=True)
+   
+       class Meta:
+           db_table = "book"
+   
+   
+   # 创建一张作者表
+   class Author(models.Model):
+       name = models.CharField(max_length=32, verbose_name="姓名")
+       age = models.IntegerField(verbose_name="年龄")
+       # 注册时间 auto_now 在第一次创建的时候自动加上当前时间 更新的时候不变
+       create_time = models.DateTimeField(verbose_name="注册时间", auto_now_add=True)
+       # 更新时间 auto_now_add  第一注册会加 然后每一次更新数据 会随着更新
+       update_time = models.DateTimeField(verbose_name="更新", auto_now=True)
+   
+       # 创建一个一对多字段
+       book = models.ManyToManyField(
+           # 关联到那张表
+           to="Book",
+           # 自己创建的第三张表的表明
+           through="BookToAuthor",
+           # 需要关联的字段
+           through_fields=("author", "book"),
+       )
+   
+       class Meta:
+           db_table = "author"
+   
+   
+   class BookToAuthor(models.Model):
+       # 作者 CASCADE 级联更新 + 级联删除
+       author = models.ForeignKey(to="Author", on_delete=models.CASCADE)
+       # 图书
+       book = models.ForeignKey(to="Book", on_delete=models.CASCADE)
+       # 注册时间 auto_now 在第一次创建的时候自动加上当前时间 更新的时候不变
+       create_time = models.DateTimeField(verbose_name="注册时间", auto_now_add=True)
+       # 更新时间 auto_now_add  第一注册会加 然后每一次更新数据 会随着更新
+       update_time = models.DateTimeField(verbose_name="更新", auto_now=True)
+   
+       class Meta:
+           db_table = "author_to_book"
+   """
+   
+   # 3.方案三：在关联表中 用多对多字段关联第三张表 Django会帮助我们创建第三张表
+   # 之后会学 多对多表数据的增删查改
+   # 从图书表查询到作者表 对多对字段就有相应的渐变方法
+   # 跨表操作的时候 也有方便的方法
+   """
+   # 创建一张图书表
+   class Book(models.Model):
+       # 图书名
+       title = models.CharField(max_length=255, verbose_name="书籍名")
+       price = models.CharField(max_length=255, verbose_name="书籍价格")
+       # 注册时间 auto_now 在第一次创建的时候自动加上当前时间 更新的时候不变
+       create_time = models.DateTimeField(verbose_name="注册时间", auto_now_add=True)
+       # 更新时间 auto_now_add  第一注册会加 然后每一次更新数据 会随着更新
+       update_time = models.DateTimeField(verbose_name="更新", auto_now=True)
+   
+       class Meta:
+           db_table = "book"
+   
+   
+   # 创建一张作者表
+   class Author(models.Model):
+       name = models.CharField(max_length=32, verbose_name="姓名")
+       age = models.IntegerField(verbose_name="年龄")
+       # 注册时间 auto_now 在第一次创建的时候自动加上当前时间 更新的时候不变
+       create_time = models.DateTimeField(verbose_name="注册时间", auto_now_add=True)
+       # 更新时间 auto_now_add  第一注册会加 然后每一次更新数据 会随着更新
+       update_time = models.DateTimeField(verbose_name="更新", auto_now=True)
+   
+       # 创建一个多对多字段
+       book = models.ManyToManyField(
+           # 关联到那张表
+           to="Book"
+       )
+   
+       class Meta:
+           db_table = "author"
+   """
+   ```
+
+   
+
+3. Django连接MySQL数据库的注意事项
+
+   ```python
+   # 【三】连接MySQL 创建模型表
+   # 1.配置数据库参数
+   # setting.py
+   """
+   DATABASES = {
+       'default': {
+           'ENGINE': 'django.db.backends.mysql',
+           'NAME': "django08data",
+           "USER": 'root',
+           "PASSWORD": '123456',
+           "HOST": '127.0.0.1',
+           "PORT": '3306',
+           "CHARSET": 'utf8mb4',
+       }
+   }
+   """
+   
+   # 2.注入补丁或安装参数
+   # __init__.py
+   """
+   import pymysql
+   
+   pymysql.install_as_MySQLdb()
+   """
+   
+   # 3.创建模型表
+   # user/model.py
+   """
+   class User(models.Model):
+       name = models.CharField(max_length=32, verbose_name="姓名")
+       age = models.IntegerField(verbose_name="年龄")
+       # 注册时间 auto_now 第一次创建时自动加上当前时间 后面也不会变
+       register_time = models.DateTimeField(verbose_name="注册时间", auto_now=True)
+       # 更新时间 auto_now_add 第一次注册会加 然后每一次更新数据 都会随着更新改变
+       update_time = models.DateTimeField(verbose_name="更新时间", auto_now_add=True)
+       
+       # 配置表 元信息
+       class Meta:
+           # 表名
+           db_table = "user"
+   """
+   
+   # 4.迁移数据库
+   # 第一步生成迁移记录: python manage.py makemigrations
+   # 第二步迁移记录生效: python manage.py migrate
+   # 去run task - manage.py@项目名 那里跑
+   # 一定要先建好数据库 再去迁移
+   
+   # 然后就可以在Pycharm里表了
+   # 打开右侧Database 选择mysql 输入用户密码和数据库名字进行连接
+   # 刷新后 可以看到有上面的db_table名字 如果没刷新出来 需要排错
+   ```
+
+   
+
+4. 什么是事务，事务的特点
+
+   事务是指一系列相关操作的集合，这些操作被视为一个不可分割的工作单元。
+
+   ACID 原子性、一致性、隔离性、持久性
+
