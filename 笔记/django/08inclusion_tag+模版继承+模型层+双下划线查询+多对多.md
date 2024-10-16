@@ -13,7 +13,7 @@
 
 # 【三】制作 inclusion_tag
 # 0.创建app user
-# 1.在user里创建一个文件夹 templatestags
+# 1.在user里创建一个文件夹 templatetags
 # 2.在这个文件夹创建 一个文件 任意名字 目前叫 CommoninclusionTag.py
 # 3.书写当前的模版逻辑
 

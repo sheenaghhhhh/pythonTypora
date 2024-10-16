@@ -820,3 +820,268 @@
 
    ACID 原子性、一致性、隔离性、持久性
 
+
+
+
+
+
+
+## 07
+
+1. 你都知道哪些转换器，如何自定义转换器
+
+   ```python
+   # str 匹配除了 '/' 之外的非空字符串。
+   # int 匹配 0 或任何正整数
+   # slug 匹配任意由 ASCII 字母或数字以及连字符和下划线组成的短标签。
+   # uuid 匹配一个格式化的 UUID 。
+   # path 匹配非空字段，包括路径分隔符 '/' 。
+   
+   # 【3】自定义路径转换器
+   # （1）先创建一个文件 任意命名 比如 path_converters.py
+   # （2）在当前文件中定义自定义转换器的逻辑
+   """
+   # 【1】创建一个类 --->必须按照年份传入数据 2020 ---> 转成数字类型
+   class FourDigitYearConverter:
+       # 【2】定义正则匹配规则
+       # [0-9] ---> 字符组
+       # {4} {n,m} --> 贪婪匹配 最少是n 最多是 m 默认按最多取
+       regex = r"[0-9]{4}"
+       
+   
+       # 【3】定义一个函数
+       def to_python(self, value):
+           '''
+           接收到当前路径中的参数并对参数进行转换转换成Python中的数据类型
+           :return: 
+           '''
+           return int(value)
+   
+       # 【4】定义一个函数
+       def to_url(self, value):
+           '''
+           根据上面定义的正则匹配表达式将 url 中的参数提取出来
+           # 2024 ---> 2024
+           :return: 
+           '''
+           return "%0d4" % value
+   """
+   # （3）使用自定义转换器
+   '''
+   # 【一】导入自定义的路径转换器类
+   from order.path_converters import FourDigitYearConverter
+   # 【二】借助Django的转换器语法转换成 Django的转换器
+   from django.urls import register_converter
+   
+   # 【三】注册你的转换器
+   register_converter(FourDigitYearConverter, "aaa")
+   
+   urlpatterns = [
+       # 【0】自定义路径转换器
+       path("self_pattern/<aaa:name>/", self_pattern, name="self_pattern"),
+   ]
+   '''
+   ```
+
+2. 什么是inclusion_tag 如何做
+
+   inclusion_tag 可以用来实现 一个代码片段 但是可以在不同页面上加载
+
+   ```python
+   # 制作过程
+   # 0.创建app user
+   # 1.在user里创建一个文件夹 templatestags
+   # 2.在这个文件夹创建 一个文件 任意名字 目前叫 CommoninclusionTag.py
+   # 3.书写当前的模版逻辑
+   '''
+   # 【一】导入模块
+   # 加一句话必须有
+   from django import template
+   
+   # 【二】创建 register 对象
+   # 这句话也固定 不要改名 易搞错
+   # 需要往这个图书馆里 增加我们自定义的内容
+   register = template.Library()
+   
+   
+   # 【三】定义当前模板
+   # 注册模板 - 参数 写自己的模版文件名(前端文件名)
+   # 前端文件写在 templates 里面 检索到 templates 里面的文件
+   # user - templates - 前端文件
+   # user - templatetags - py
+   @register.inclusion_tag("adv_temp_html.html")
+   def adv_temp(info_data):
+       # 将当前的局部名称空间返回
+       return locals()
+   
+   
+   # 【四】使用当前制作好的标签模版
+   # 需要在哪个页面用就在那个页面加载
+   # 加载当前 templatetags 文件夹下的 模版标签所在的文件名
+   {% load CommoninclusionTag %}
+   # 加载需要渲染的标签模版所在的函数名 有什么参数直接向后写 多个参数 , 分隔开
+   {% adv_temp info_data %}
+   # 自己写网页 待补充
+   '''
+   ```
+
+3. 什么是正向什么是反向
+
+   正向：从有外键字段的表出发去没有外键字段的表中查数据
+
+   反向：从没有外键字段的表出发去有外键字段的表中查数据
+
+4. 查询书籍id为1的作者的电话
+
+   ```python
+   # Book 外键 author 无外键
+   book_info = Book.Object.filter(id=1).values(
+       "name",
+       "author__name",
+   	"author__detail__phone"
+   )
+   
+   book_info = AuthorDetail.filter(author__book__id=1).values(
+       "author__book__name",
+       "author__name",
+   	"phone"
+   )
+   ```
+
+5. 查询出版社 id为1的出版的书的作者电话
+
+   ```python
+   # publish book  author 无
+   book_info = Publish.filter(author__book__id=1).values(
+       "author__book__name",
+       "author__name",
+   	"phone"
+   )
+   ```
+
+
+
+
+
+
+## 08
+
+1. 什么是事务，事务有哪些特性
+
+   事务是指一系列相关操作的集合，这些操作被视为一个不可分割的工作单元。
+
+   ACID 原子性、一致性、隔离性、持久性
+
+2. SQL中常用的约束条件有哪些， orm中常用的字段参数有哪些
+
+   ```python
+   """
+   - 非空约束（not null）
+   - 唯一性约束（unique）
+   - 组合使用 not null 和 unique
+   - 主键约束PK（primary key）
+   - 外键约束FK（foreign key）
+   """
+   
+   """
+   null
+   default
+   primary_key
+   unique
+   choices
+   """
+   ```
+
+3. 什么是闭包函数，闭包函数的应用场景
+
+   内嵌函数对外部作用域有引用的函数就叫闭包函数
+
+   装饰器 计时器timer 验证
+
+   ```python
+   def outer(func):
+       def inner():
+           ...
+           return result
+       return inner
+   ```
+
+4. 如何在前端页面书写定时器如何清除定时器(定时器和延时器都写
+
+   ```js
+   setInterval
+   clearInterval
+   setTimeout
+   clearTimeout
+   
+   // 设置定时器/延时器
+   // (1)定时器: 到指定时间就自动执行
+   // 第一个参数放 延时执行的函数
+   // 第二个参数放 延时的时间 以毫秒为单位
+   // 效果就是隔执行时间自动执行
+   setInterval(
+       function () {
+           console.log("定时器执行了!")
+       },
+       2000
+   )
+   
+   // (2)延时器: 延迟指定时间后再执行
+   // 第一个参数 延时执行的函数
+   // 第二个参数 延时的时间 以毫秒为单位
+   // 效果 延迟 指定时间自动执行
+   setTimeout(
+       function() {
+           window.alert("延时器执行了!")
+       },
+       2000
+   )
+   
+   // 删除定时器/延时器
+   // (1)删除定时器
+   // 参数是当前设置定时器时候的 定时器 ID
+   clearInterval(
+       10
+   )
+   
+   // (2)删除延时器
+   // 参数是当前设置延时器时候的 延时器 ID
+   clearTimeout(
+       10
+   )
+   ```
+
+   
+
+5. 如何在前端获取input输入框中的内容
+
+   ```js
+   // input标签 设置id=i1
+   
+   // js里
+   var inputElement = document.getElementById("i1");
+   var value = inputElement.value
+   ```
+
+   
+
+6. 如何给标签绑定事件
+
+   ```js
+   // 1.方式一：
+   // 获取到当前的标签对象直接 .click 绑定事件
+   // 点击事件
+   $("#btn").click(
+       ()=>{
+           alert(233)
+       }
+   )
+   
+   // 2.方式二：绑定事件类型去绑定事件
+   // 获取到当前标签对象然后 .on绑定事件类型
+   $("#btn").on("click", () => {
+       alert(233)
+   })
+   ```
+
+   
