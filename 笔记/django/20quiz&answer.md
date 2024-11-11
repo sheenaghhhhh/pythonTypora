@@ -1051,8 +1051,6 @@
    )
    ```
 
-   
-
 5. 如何在前端获取input输入框中的内容
 
    ```js
@@ -1062,8 +1060,6 @@
    var inputElement = document.getElementById("i1");
    var value = inputElement.value
    ```
-
-   
 
 6. 如何给标签绑定事件
 
@@ -1085,3 +1081,608 @@
    ```
 
    
+
+
+
+## 09
+
+1. 什么是ajax
+
+   AJAX，翻译成中文就是“异步的Javascript和XML”。
+
+   就是使用Javascript语言与服务器进行异步交互，传输的数据为XML。
+
+   可以在不重新加载整个页面的情况下，可以与服务器交换数据并更新部分网页内容。
+
+2. ajax模版，两个，一个是发送普通键值对，一个是发送文件数据
+
+   ```html
+   <script>
+       // Ajax 是 js 代码封装的
+       $(document).ready(
+           //
+           $("#btn_submit").click(function () {
+               // 获取到用户输入的用户名和密码
+               let username = $("#username").val()
+               let password = $("#password").val()
+   
+               // 向后端发起请求 发送当前的数据
+               // 标准格式
+               $.ajax({
+                   // 想要提交数据的目标地址 form 表单上的 action
+                   // 不写 默认就是当前访问到的路由地址 写了就是指定的路由地址
+                   url: "",
+   
+                   // type 定义当前请求的请求方式
+                   // get / post
+                   type: "post",
+   
+                   // data : 向后端传递的数据 携带的数据 字典
+                   // Ajax交互传递的事 json 格式的数据
+                   data: {
+                       "username": username,
+                       "password": password,
+                   },
+   
+                   // 最后一个必要的参数
+                   // success : 想后端提交请求之后 Ajax是 异步操作 需要对响应会的数据进行一步的额外处理
+                   success: function (data) {
+                       console.log(data.success)
+                   }
+               })
+           })
+       )
+   </script>
+   
+   
+   <script>
+       // Ajax 是 js 代码封装的
+       $(document).ready(
+           //
+           $("#btn_submit").click(function () {
+               // 获取到用户输入的用户名和密码
+               let username = $("#username").val()
+               let password = $("#password").val()
+               {#let avatar = $("#avatar").val()
+   
+               // 让 Ajax 提交文件数据 就必须就借助另一个对象 FromData
+               // 1.创建一个 FromData 对象
+               let formObj = new FormData();
+               // 2.将字符串数据放到 formObj 对象中
+               formObj.append("username", username)
+               formObj.append("password", password)
+               // 3.提取出当前上传的文件对象
+               let avatar = $("#avatar")[0].files[0]
+               formObj.append("avatar", avatar)
+   
+               // 向后端发起请求 发送当前的数据
+               // 标准格式
+               $.ajax({
+                   // 想要提交数据的目标地址 form 表单上的 action
+                   // 不写 默认就是当前访问到的路由地址 写了就是指定的路由地址
+                   url: "",
+   
+                   // type 定义当前请求的请求方式
+                   // get / post
+                   type: "post",
+   
+                   // data : 向后端传递的数据 携带的数据 字典
+                   // Ajax交互传递的事 json 格式的数据
+                   // 如果提交的数据是 formObj 里面带着 文件数据 用 字典就不行会报错
+                   /*
+                   *
+                   *  {
+                   "username": username,
+                   "password": password,
+                   "formObj": formObj
+               }
+                   * */
+                   data: formObj,
+   
+                   // 4.在传输文件数据的时候增加额外的参数约束
+                   // (1)告诉浏览器不需要对数据进行任何的编码 Django 可以自动识别到 FormData 对象并且提取出数据
+                   contentType: false,
+                   // (2)告诉浏览器不要对我已经处理过的数据进行二次处理
+                   processData: false,
+   
+                   // 最后一个必要的参数
+                   // success : 想后端提交请求之后 Ajax是 异步操作 需要对响应会的数据进行一步的额外处理
+                   success: function (data) {
+                       console.log(data.success)
+                   }
+               })
+           })
+       )
+   </script>
+   ```
+
+3. 如何批量插入数据
+
+   ```python
+   # 使用bull_create 可以插入大量数据时节省大量时间
+   
+   book_all = Book.objects.bulk_create(book_obj_list)
+   ```
+
+4. 简述分页器原理和伪代码
+
+   ```python
+   # 原理
+   # 想好 第 x 页的第一篇 和最后一篇位置的 数学规律
+   # 再结合 切片器 顾头不顾尾
+   # 每次要切的就是 [every_page*(page-1):every_page*page] (从0开始的话)
+   # 伪代码
+   
+   def book_split_page(request):
+       # 当前页 current_page 从当前的 请求地址中获取
+       # 起始页(起始索引) start_page
+       # 结束页(结束索引) end_page
+       # 每一页的条数 per_page_num
+   
+       # 【一】获取到当前所有的图书对象
+       book_all = Book.objects.all()
+       # 【二】获取到当前的页码 current_page 从当前的 请求地址中获
+       # http://localhost:8000/user/book_split_page/?page=1
+       current_page = request.GET.get("page", 1)
+       # 对当前页码进行判断是否是数字类型
+       try:
+           current_page = int(current_page)
+       except:
+           current_page = 1
+       # 【三】每一页的条数 per_page_num
+       per_page_num = 1000
+       # 【四】开始创建分页参数
+       # 1.知道一共有多少页 --- 用 divmod
+       page_all, page_last = divmod(book_all.count(), per_page_num)
+       if page_last > 0:
+           page_all += 1
+       # 2.起始页(起始索引) start_page
+       start_page = (current_page - 1) * per_page_num
+       # 3.结束页(结束索引) end_page
+       end_page = current_page * per_page_num
+   
+       # 【五】对查询出的所有数据进行切片
+       query_set = book_all[start_page:end_page]
+       print(query_set, len(query_set))
+   
+       return render(request, "book_split_page.html", locals())
+   ```
+
+   
+
+
+
+## 10
+
+用form组件实现注册功能
+
+自己创建模型表，创建组件类，校验规则
+
+字段：用户名，密码，确认密码，爱好，性别，头像文件。除了确认密码，其他都保存到数据库中
+
+```python
+class RegisterView(View):
+    def get(self, request, *args, **kwargs):
+        form_obj = RegisterForm()
+        gender_choices = User.gender_choices
+        hobby_choices = User.hobby_choices
+        return render(request, "register.html", locals())
+
+    def post(self, request, *args, **kwargs):
+        print(request.POST)
+        
+        
+# models.py
+class User(models.Model):
+    gender_choices = (
+        (0, 'male'),
+        (1, 'female')
+    )
+    hobby_choices = {
+        1: "唱",
+        2: "跳",
+        3: "rap",
+        4: "篮球"
+    }
+    username = models.CharField(max_length=32)
+    password = models.CharField(max_length=32)
+    hobby = models.CharField(max_length=32)
+    gender = models.IntegerField(choices=gender_choices)
+    avatar = models.CharField(max_length=32)
+    # 用户名，密码，确认密码，爱好，性别，头像文件
+```
+
+```html
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <link href="{% static 'plugins/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h1 class="text-center">这是注册页面</h1>
+            <form>
+                {% for form in form_obj %}
+                    <div class="form-group">
+                        {{ form.label_tag }}
+                        {{ form }}
+                    </div>
+                {% endfor %}
+                {# 性别的单选框 #}
+                <div class="form-group">
+                    <b>性别 :>>>></b>
+                    <label class="radio-inline">
+                        <input type="radio" name="inlineRadioOptions" id="gender_male" value="0"> 女
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="inlineRadioOptions" id="gender_female" value="1"> 男
+                    </label>
+                </div>
+                {# 爱好多选框 #}
+                <div class="form-group">
+                    <b>爱好 :>>>></b>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="hobby_1" value="1"> 唱
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="hobby_2" value="2"> 跳
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="hobby_3" value="3">rap
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="hobby_4" value="4"> 篮球
+                    </label>
+                </div>
+                {# 头像上传框 #}
+                <div class="form-group">
+                    <label for="avatar">
+                        <b>头像 :>>>></b>
+                        <br>
+                        <input type="file" id="avatar">
+                    </label>
+                </div>
+                <div class="text-center form-group">
+                    <input type="button" class="btn btn-success form-control" id="btn_submit" value="注册">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $("#btn_submit").click(function () {
+        // 上传文件需要借助 formData 对象
+        // 【一】获取到用户名的值
+        function getInputValue() {
+            let formObj = new FormData()
+            let userName = $("#id_username").val()
+            let passWord = $("#id_password").val()
+            let confirmPassWord = $("#id_confirm_password").val()
+            // forEach 可以有四个参数 填两个 前面是 元素对应的索引 后边是当前元素
+            let hobby = []
+            for (item of $("input:checkbox:checked")) {
+                hobby.push($(item).val())
+            }
+            let gender = $($("input:radio:checked")[0]).val()
+            let avatar = $("#avatar")[0].files[0]
+            formObj.append("username", userName)
+            formObj.append("password", passWord)
+            formObj.append("confirm_password", confirmPassWord)
+            formObj.append("hobby", hobby.join(","))
+            formObj.append("gender", gender)
+            formObj.append("avatar", avatar)
+            return formObj
+        }
+
+        $.ajax({
+            url: "",
+            type: "post",
+            data: getInputValue(),
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                console.log(data)
+            }
+        })
+    })
+
+</script>
+</body>
+</html>
+```
+
+
+
+
+
+
+
+## 11
+
+1. 什么是静态方法，什么是动态方法，有什么区别
+
+   分类 定义 调用方式
+
+   静态方法 - 非绑定方法 @statisticmethod 
+
+   cls.func() obj.func()
+
+   动态方法 - 绑定给类 @classmethod
+
+   obj.func() / cls.func() 都不需要传入额外的参数
+
+   动态方法 - 绑定给对象 
+
+   会自动把这个obj作为self传入 / cls.func(obj) 需要主动传入对象  
+
+2. 什么是http协议。什么特点
+
+   超文本传输协议 用于传输与超文本相关的资源文件 是一种无状态网络应用协议
+
+   基于请求和响应的模型
+
+   基于TCP和IP之上的应用层协议
+
+   无状态
+
+   短连接
+
+3. 什么是事务，什么特点
+
+   事务是指一系列相关操作的集合，这些操作被视为一个不可分割的工作单元。
+
+   ACID 原子性、一致性、隔离性、持久性
+
+4. Django连接MySQL有哪些注意事项
+
+   ```python
+   # 【三】连接MySQL 创建模型表
+   # 1.配置数据库参数
+   # setting.py
+   """
+   DATABASES = {
+       'default': {
+           'ENGINE': 'django.db.backends.mysql',
+           'NAME': "django08data",
+           "USER": 'root',
+           "PASSWORD": '123456',
+           "HOST": '127.0.0.1',
+           "PORT": '3306',
+           "CHARSET": 'utf8mb4',
+       }
+   }
+   """
+   
+   # 2.注入补丁或安装参数
+   # __init__.py
+   """
+   import pymysql
+   
+   pymysql.install_as_MySQLdb()
+   """
+   
+   # 3.创建模型表
+   # user/model.py
+   """
+   class User(models.Model):
+       name = models.CharField(max_length=32, verbose_name="姓名")
+       age = models.IntegerField(verbose_name="年龄")
+       # 注册时间 auto_now 第一次创建时自动加上当前时间 后面也不会变
+       register_time = models.DateTimeField(verbose_name="注册时间", auto_now=True)
+       # 更新时间 auto_now_add 第一次注册会加 然后每一次更新数据 都会随着更新改变
+       update_time = models.DateTimeField(verbose_name="更新时间", auto_now_add=True)
+       
+       # 配置表 元信息
+       class Meta:
+           # 表名
+           db_table = "user"
+   """
+   
+   # 4.迁移数据库
+   # 第一步生成迁移记录: python manage.py makemigrations
+   # 第二步迁移记录生效: python manage.py migrate
+   # 去run task - manage.py@项目名 那里跑
+   # 一定要先建好数据库 再去迁移
+   
+   # 然后就可以在Pycharm里表了
+   # 打开右侧Database 选择mysql 输入用户密码和数据库名字进行连接
+   # 刷新后 可以看到有上面的db_table名字 如果没刷新出来 需要排错
+   ```
+
+5. 什么是数据库范式。什么是三大范式
+
+   范式就是在设置数据库的表时，一些共同需要遵守的规范
+
+   第一范式：确保原子性，表中每一个列数据都必须是不可再分的字段。
+
+   第二范式：确保唯一性，每张表都只描述一种业务属性，一张表只描述一件事
+
+   第三范式：确保独立性，表中除主键外，每个字段之间不存在任何依赖，都是独立的。
+
+   
+
+
+
+## 12
+
+1. 什么是范式，你知道那些数据库范式
+
+   范式就是一些共同需要遵守的规范
+
+   第一范式：确保原子性，表中每一个列数据都必须是不可再分的字段。
+
+   第二范式：确保唯一性，每张表都只描述一种业务属性，一张表只描述一件事
+
+   第三范式：确保独立性，表中除主键外，每个字段之间不存在任何依赖，都是独立的。
+
+2. 什么是事务，事务的四大特点。
+
+   事务是指一系列相关操作的集合，这些操作被视为一个不可分割的工作单元。
+
+   ACID 原子性、一致性、隔离性、持久性
+
+3. 给你一段html代码前端，如果我不想要其中的script标签及中间的内容，你能想到哪些方案
+
+   ```html
+   // 前端
+   // 后端
+   ```
+
+   
+
+4. 你知道哪些魔法方法，各自的作用是什么
+
+   ```python
+   # __init__      ：初始化对象时触发
+   # __del__      ：删除对象时触发
+   # __new__      ：构造对象时触发
+   # __str__      ：对象str函数或者print函数触发
+   # __repr__      ：repr或者交互式解释器触发
+   # __doc__      ：打印类内的注释内容
+   # __enter__     ：打开文档触发
+   # __exit__      ：关闭文档触发
+   # __getattr__   ：对象访问不存在的属性时调用
+   # __setattr__   ：设置实例对象的一个新的属性时调用
+   # __delattr__   ：删除一个实例对象的属性时调用
+   # __setitem__   ：使用索引操作符为对象的字段赋值时触发
+   # __getitem__   ：使用索引操作符获取对象的字段值时触发
+   # __delitem__   ：使用索引操作符删除对象的字段时触发
+   ```
+
+   
+
+5. ajax传输文件数据有哪些注意事项
+
+   ```html
+   // 其他数据格式是一起去传递
+   // 文件数据格式需要专门进行传递
+   <script>
+       // Ajax 是 js 代码封装的
+       $(document).ready(
+           //
+           $("#btn_submit").click(function () {
+               // 获取到用户输入的用户名和密码
+               let username = $("#username").val()
+               let password = $("#password").val()
+               {#let avatar = $("#avatar").val() #}
+   
+               // 让 Ajax 提交文件数据 就必须就借助另一个对象 FromData
+               // 【1】创建一个 FromData 对象
+               let formObj = new FormData();
+               // 【2】将字符串数据放到 formObj 对象中
+               formObj.append("username", username)
+               formObj.append("password", password)
+               // 【3】提取出当前上传的文件对象
+               let avatar = $("#avatar")[0].files[0]
+               formObj.append("avatar", avatar)
+   
+               // 向后端发起请求 发送当前的数据
+               // 标准格式
+               $.ajax({
+                   // 想要提交数据的目标地址 form 表单上的 action
+                   // 不写 默认就是当前访问到的路由地址 写了就是指定的路由地址
+                   url: "",
+   
+                   // type 定义当前请求的请求方式
+                   // get / post
+                   type: "post",
+   
+                   // data : 向后端传递的数据 携带的数据 字典
+                   // Ajax交互传递的事 json 格式的数据
+                   // 如果提交的数据是 formObj 里面带着 文件数据 用 字典就不行会报错
+                   /*
+                   *
+                   *  {
+                   "username": username,
+                   "password": password,
+                   "formObj": formObj
+               }
+                   * */
+                   data: formObj,
+   
+                   // 【4】在传输文件数据的时候增加额外的参数约束
+                   // （1）告诉浏览器不需要对数据进行任何的编码 Django 可以自动识别到 FormData 对象并且提取出数据
+                   contentType: false,
+                   // （2）告诉浏览器不要对我已经处理过的数据进行二次处理
+                   processData: false,
+   
+                   // 最后一个必要的参数
+                   // success : 想后端提交请求之后 Ajax是 异步操作 需要对响应会的数据进行一步的额外处理
+                   success: function (data) {
+                       console.log(data.success)
+                   }
+               })
+           })
+       )
+   </script>
+   ```
+
+   
+
+6. 什么是装饰器，什么是迭代器，什么是生成器
+
+   在不修改被装饰对象源代码和调用方式的前提下为被装饰对象添加额外的功能
+
+   迭代取值的工具 既有`__iter__`也有`__next__`方法的对象
+
+   g = (x * 2 for x in range(5))
+
+   def my_generator():
+       yield 1
+       yield 2
+       yield 3
+
+   节省内存 惰性计算 无限序列
+
+
+
+
+
+## 13
+
+1. 什么是装饰器，什么是迭代器，什么是生成器
+
+   装饰器：在不修改被装饰对象源代码和调用方式的前提下为被装饰对象添加额外的功能
+
+   迭代器：迭代取值的工具，迭代器对象是既有`__iter__`也有`__next__`方法的对象
+
+   生成器：在需要时生成数据，而不必提前从内存中生成并存储整个数据集。
+
+2. 你知道哪些魔法方法，各自的作用是什么
+
+   ```python
+   # __init__      ：初始化对象时触发
+   # __del__      ：删除对象时触发
+   # __new__      ：构造对象时触发
+   
+   # __str__      ：对象str函数或者print函数触发
+   # __repr__      ：repr或者交互式解释器触发
+   # __doc__      ：打印类内的注释内容
+   
+   # __enter__     ：打开文档触发
+   # __exit__      ：关闭文档触发
+   
+   # __getattr__   ：对象访问不存在的属性时调用
+   # __setattr__   ：设置实例对象的一个新的属性时调用
+   # __delattr__   ：删除一个实例对象的属性时调用
+   
+   # __setitem__   ：使用索引操作符为对象的字段赋值时触发
+   # __getitem__   ：使用索引操作符获取对象的字段值时触发
+   # __delitem__   ：使用索引操作符删除对象的字段时触发
+   ```
+
+3. 什么是闭包函数，闭包函数的用途
+
+   内嵌函数对外部作用域有引用的函数就叫闭包函数
+
+   可以用来保存状态和实现装饰器

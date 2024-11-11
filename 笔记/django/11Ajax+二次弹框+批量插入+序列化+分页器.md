@@ -4,26 +4,32 @@
 # 【一】Django如何返回JSON格式的数据
 # 1.为什么要返回JSON格式的数据
 # JSON数据格式是前后端传输数据通用的数据格式
-# 前端 数组array [] 对象object {} ---> 前段认识 后端不认识
-# 后端 列表 [] 字典 {} ---> 后端认识前端不认识
 
-# JSON.parse / JSON.strify               json.loads / json.dumps
-# 前端 数组array [] ---> 中间层(JSON)  ---> 后端 列表 []
+# 前端 数组array [] 对象object {} -> 前端认识 后端不认识
+# 后端 列表 [] 字典 {} -> 后端认识 但前端不认识
+
+# JSON.parse / JSON.stringify         json.loads /json.dumps
+# 前端 数组array [] -> 中间层(JSON) -> 后端 列表 []
 
 # 2.Django如何返回JSON格式数据
 # (1)方式一
 # HttpResponse({},content_type="application/json")
 # (2)方式二
-# JSONResponse({})
+# JSONResponse()
+
 
 # 【二】Ajax
-# 通过form表单传递数据的时候传递数据的方式不可控
+# 通过 form 表单传递数据的时候传递数据的方式不可控
 # 只能通过 input 标签上的 name 传递数据
-# 在传输之前想要对数据进行二次校验 拦截不到 没办法校验
-# 于是就有了一种技术 先获取到输入的内容 对内容进行处理
-# 再将处理后的数据发送给 后端 (Ajax 如何在前端主动向后端发起请求并拦截处理)
+# 在传输之前想对数据进行二次校验 拦截不到做不了
+# 于是就有了这样一种技术
+# 先获取输入的内容
+# 对内容进行处理
+# 再将处理后的数据发送给后端(Ajax 如何在前端主动向后端发起请求并处理)
 
-# 1.Ajax介绍
+# 1.Ajax介绍事务是指一系列相关操作的集合，这些操作被视为一个不可分割的工作单元。
+
+# ACID 原子性、一致性、隔离性、持久性
 # ● AJAX（Asynchronous Javascript And XML）翻译成中文就是“异步的Javascript和XML”。
 #   ○ 即使用Javascript语言与服务器进行异步交互，传输的数据为XML（当然，传输的数据不只是XML）。
 # ● AJAX 不是新的编程语言，而是一种使用现有标准的新方法。
@@ -34,11 +40,11 @@
 #   ○ 异步交互：
 #     ■ 客户端发出一个请求后，无需等待服务器响应结束，就可以发出第二个请求。
 
-# 2.复习一一下常用的提交请求方式
-# 对于浏览器来说 ： 直接在地址栏回车 --- GET
-# 对于a标签来说 ： 在 href 属性上定义请求地址 --- GET
-# 对于 form 标签来说 ： 在 method 属性上定义请求方式 -- GET / POST
-# 对于 Ajax 来说 ： --- GET / POST
+# 2.复习一下常用的提交请求方式
+# 对于浏览器来说: 直接在地址栏回车 - GET
+# 对于a标签来说: 在 href 属性上定义请求地址 - GET
+# 对于 form 标签来说: 在 method 属性上定义请求方式 - GET / POST
+# 对于 Ajax 来说: - GET / POST
 ````
 
 

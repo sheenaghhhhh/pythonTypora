@@ -32,6 +32,7 @@ class Student(models.Model):
 # 【一】SQL语句的数据库操作
 # 【1】操作数据库
 # create database 数据库名字
+# use 数据库名字
 # 【2】操作数据表
 # create table 表名(字段信息)
 # drop table 表名;
