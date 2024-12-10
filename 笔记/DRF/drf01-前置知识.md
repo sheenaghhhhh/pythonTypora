@@ -192,9 +192,9 @@ https://api.map.baidu.com/place/v2/search?ak=6E823f587c95f0148c19993539b99295&re
     -可以导入导出 点击搞定
 ```
 
-![image-20241111152735350](file://\\192.168.1.96\Python%E5%85%A8%E6%A0%88%E8%AE%B2%E8%AF%BE%E8%B5%84%E6%BA%90\Python%E5%85%A8%E6%A0%8830%E6%9C%9F\%E3%80%908.0%E3%80%91DRF%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A\day01\%E7%AC%94%E8%AE%B0\drf-day01.assets\image-20241111152735350.png?lastModify=1731324378)
+![image-20241111193422035](assets/image-20241111193422035.png)
 
-![image-20241111152938937](file://\\192.168.1.96\Python%E5%85%A8%E6%A0%88%E8%AE%B2%E8%AF%BE%E8%B5%84%E6%BA%90\Python%E5%85%A8%E6%A0%8830%E6%9C%9F\%E3%80%908.0%E3%80%91DRF%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A\day01\%E7%AC%94%E8%AE%B0\drf-day01.assets\image-20241111152938937.png?lastModify=1731324383)
+![image-20241111193429110](assets/image-20241111193429110.png)
 
 
 
@@ -316,7 +316,7 @@ RESTful是一种定义Web API接口的设计风格，尤其适用于前后端分
 # 步骤
 	0 django:4.4.4   drf:3.15.2
 	1 安装：djangorestframework
-    	pip install djangorestframework --upgrade
+    	-pip install djangorestframework --upgrade
     2 django版本要3.x以上才可以   4.x
     	-如果你django是2.x---》pip install djangorestframework
         -写在django--》装django最新：5.x--》把drf最新装上
